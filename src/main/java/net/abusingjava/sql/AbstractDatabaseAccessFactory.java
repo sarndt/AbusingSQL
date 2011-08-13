@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.schema.Schema;
 
 @Author("Julian Fleischer")
 @Version("2011-08-08")

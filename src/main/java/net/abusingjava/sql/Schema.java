@@ -1,4 +1,4 @@
-package net.abusingjava.sql.schema;
+package net.abusingjava.sql;
 
 import java.util.HashSet;
 import java.util.LinkedList;

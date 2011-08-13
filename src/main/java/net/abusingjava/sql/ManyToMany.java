@@ -1,4 +1,4 @@
-package net.abusingjava.sql.schema;
+package net.abusingjava.sql;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;

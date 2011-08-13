@@ -1,22 +1,12 @@
-package net.abusingjava.sql.schema;
+package net.abusingjava.sql;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-import net.abusingjava.Author;
-import net.abusingjava.Max;
-import net.abusingjava.MaxLength;
-import net.abusingjava.Min;
-import net.abusingjava.MinLength;
-import net.abusingjava.NotGonnaHappenException;
-import net.abusingjava.NotNull;
-import net.abusingjava.Version;
+import net.abusingjava.*;
 import net.abusingjava.arrays.AbusingArrays;
 import net.abusingjava.reflection.AbusingReflection;
-import net.abusingjava.sql.ActiveRecord;
-import net.abusingjava.sql.DatabaseSQL;
-import net.abusingjava.sql.Unique;
 
 @Author("Julian Fleischer")
 @Version("2011-08-13")
@@ -28,7 +18,7 @@ public class Property {
 	final Class<?> $genericType;
 	final boolean $isOnePart;
 	final boolean $isManyPart;
-	final boolean $isUnique;
+	final String $uniqueKey;
 	final boolean $isNullable;
 	final Interface $parent;
 	final Long $min;
@@ -78,7 +68,12 @@ public class Property {
 			this.$min = $min;
 			this.$max = $max;
 			this.$isNullable = !AbusingArrays.containsType($annotations, NotNull.class);
-			this.$isUnique = AbusingArrays.containsType($annotations, Unique.class);
+			if (AbusingArrays.containsType($annotations, Unique.class)) {
+				Unique $key = AbusingArrays.firstOfType($annotations, Unique.class);
+				this.$uniqueKey = $key.value();
+			} else {
+				this.$uniqueKey = null;
+			}
 		} catch (NoSuchMethodException $exc) {
 			throw new NotGonnaHappenException($exc);
 		}
@@ -105,10 +100,27 @@ public class Property {
 	}
 	
 	public boolean isUnique() {
-		return $isUnique;
+		return $uniqueKey != null;
+	}
+	
+	public String getUniqueKeyName() {
+		return $uniqueKey;
 	}
 	
 	public boolean isNullable() {
 		return $isNullable;
+	}
+	
+	public long getMin() {
+		return $min;
+	}
+	
+	public long getMax() {
+		return $max;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

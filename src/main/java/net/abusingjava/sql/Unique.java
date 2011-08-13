@@ -10,7 +10,7 @@ import net.abusingjava.Version;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Author("Julian Fleischer")
-@Version("2011-08-03")
+@Version("2011-08-13")
 public @interface Unique {
-	String[] value() default {};
+	String value() default "";
 }

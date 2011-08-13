@@ -4,7 +4,6 @@ import java.sql.Connection;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.schema.Schema;
 
 /**
  * Bietet grundlegende Funktionen für den Zugriff auf die Datenbank. DatabaseAccess-Objekte sind thread-safe.

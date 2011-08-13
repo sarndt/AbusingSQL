@@ -1,22 +1,27 @@
-package net.abusingjava.sql.schema;
+package net.abusingjava.sql;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.beans.AbusingBeans;
-import net.abusingjava.sql.DatabaseSQL;
 
 @Author("Julian Fleischer")
 @Version("2011-08-13")
 public class Interface {
 
-	final Class<?> $interface;
 	final String $name;
 	final String $simpleName;
 	final String $sqlName;
+	final Class<?> $interface;
 	final Property[] $properties;
+	final UniqueKey[] $uniqueKeys;
 	final Schema $parent;
+	final Action $onDelete;
 	
 	Interface(final Schema $parent, final Class<?> $class) {
 		if ($class == null) {
@@ -34,8 +39,34 @@ public class Interface {
 		$p.remove("Id");
 		$properties = new Property[$p.size()];
 		int $i = 0;
+		Map<String,List<Property>> $keys = new HashMap<String,List<Property>>();
 		for (String $key : $p.keySet()) {
-			$properties[$i++] = new Property(this, $class, $key);
+			Property $property = new Property(this, $class, $key);
+			$properties[$i++] = $property;
+			if ($property.isUnique()) {
+				String $keyName = $property.getUniqueKeyName();
+				if (!$keys.containsKey($keyName)) {
+					$keys.put($keyName, new LinkedList<Property>());
+				}
+				$keys.get($keyName).add($property);
+			}
+		}
+		List<UniqueKey> $uniqueKeys = new LinkedList<UniqueKey>();
+		for (Entry<String,List<Property>> $e : $keys.entrySet()) {
+			if ($e.getKey().isEmpty()) {
+				for (Property $property : $e.getValue()) {
+					$uniqueKeys.add(new UniqueKey($property));
+				}
+			} else {
+				$uniqueKeys.add(new UniqueKey($e.getKey(), $e.getValue()));
+			}
+		}
+		this.$uniqueKeys = $uniqueKeys.toArray(new UniqueKey[$uniqueKeys.size()]);
+		
+		if ($interface.isAnnotationPresent(OnDelete.class)) {
+			$onDelete = $interface.getAnnotation(OnDelete.class).value();
+		} else {
+			$onDelete = Action.NO_ACTION;
 		}
 	}
 	
@@ -49,6 +80,10 @@ public class Interface {
 	
 	public Property[] getProperties() {
 		return $properties;
+	}
+	
+	public UniqueKey[] getUniqueKeys() {
+		return $uniqueKeys;
 	}
 
 	public Property getProperty(final String $name) {
