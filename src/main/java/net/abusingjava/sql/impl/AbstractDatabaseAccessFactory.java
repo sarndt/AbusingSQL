@@ -1,9 +1,13 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.impl;
 
 import java.sql.SQLException;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.DatabaseAccess;
+import net.abusingjava.sql.DatabaseAccessFactory;
+import net.abusingjava.sql.DatabaseException;
+import net.abusingjava.sql.Schema;
 
 @Author("Julian Fleischer")
 @Version("2011-08-08")

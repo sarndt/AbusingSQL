@@ -1,4 +1,4 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.impl;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -17,6 +17,9 @@ import java.util.Map;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.ActiveRecord;
+import net.abusingjava.sql.DatabaseAccess;
+import net.abusingjava.sql.Entity;
 import net.abusingjava.strings.AbusingStrings;
 
 import java.sql.Statement;

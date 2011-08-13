@@ -1,4 +1,4 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.impl;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.*;
 
 @Author("Julian Fleischer")
 @Version("2011-08-13")
@@ -64,7 +65,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, final String $query, final Object... $values) {
+	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final String $query, final Object... $values) {
 		try {
 			Connection $c = $pool.getConnection();
 			try {
@@ -73,7 +74,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 					ActiveRecordHandler.setValue($stmt, $i+1, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
-				return new RecordSet<T>(this, $result, $class);
+				return new RecordSetImpl<T>(this, $result, $class);
 			} catch (SQLException $exc) {
 				throw $exc;
 			} finally {
@@ -86,7 +87,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
 	@Override
 	public <T extends ActiveRecord<T>> T selectOne(final Class<T> $class, final String $query, final Object... $values) {
-		RecordSet<T> $result = select($class, $query, $values);
+		RecordSetImpl<T> $result = select($class, $query, $values);
 		if ($result.size() > 0) {
 			return $result.get(0);
 		}
@@ -94,21 +95,21 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "`";
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final int $limit, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` LIMIT " + $limit;
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, final int $offset, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final int $offset, final int $limit, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` LIMIT " + $limit + " OFFSET " + $offset;
 		return select($class, $sqlQuery);
@@ -118,7 +119,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	public <T extends ActiveRecord<T>> T selectById(final Class<T> $class, final int $id) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` WHERE `id` = " + $id;
-		RecordSet<T> $result = select($class, $sqlQuery);
+		RecordSetImpl<T> $result = select($class, $sqlQuery);
 		if ($result.size() == 1) {
 			return $result.getFirst();
 		}
@@ -126,7 +127,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public RecordSet<ActiveRecord<?>> query(final String $query, final Object... $values) {
+	public RecordSetImpl<ActiveRecord<?>> query(final String $query, final Object... $values) {
 		// TODO Auto-generated method stub
 		return null;
 	}

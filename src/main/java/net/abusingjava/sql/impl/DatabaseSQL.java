@@ -1,4 +1,4 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.impl;
 
 final public class DatabaseSQL {
 

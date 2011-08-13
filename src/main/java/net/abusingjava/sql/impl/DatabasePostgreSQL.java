@@ -1,7 +1,9 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import net.abusingjava.sql.DatabaseException;
 
 public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 

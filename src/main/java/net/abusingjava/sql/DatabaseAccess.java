@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.impl.RecordSetImpl;
 
 /**
  * Bietet grundlegende Funktionen für den Zugriff auf die Datenbank. DatabaseAccess-Objekte sind thread-safe.
@@ -47,17 +48,17 @@ public interface DatabaseAccess {
 	/**
 	 * Führt ein Select in der durch $class spezifizierten Tabelle aus, joint optional die angegebenen $joinClasses.
 	 */
-	<T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, Class<?>... $joinClasses);
+	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, Class<?>... $joinClasses);
 	
 	/**
 	 * Wie select(), aber mit $limit.
 	 */
-	<T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, int $limit, Class<?>... $joinClasses);
+	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, int $limit, Class<?>... $joinClasses);
 	
 	/**
 	 * Wie select(), aber mit $offset und $limit.
 	 */
-	<T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
+	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
 	
 	/**
 	 * Wie select(), aber mit einem selbst-definierten Query, der auch Fragezeichen-Parameter beinhalten kann (wird durch $values aufgefüllt).
@@ -65,12 +66,12 @@ public interface DatabaseAccess {
 	 * Beispiel:<br />
 	 * <code>$db.select(Mitarbeiter.class, "SELECT * FROM mitarbeiter WHERE vorname = ? AND nachname = ?", "Anton", "Blechdach");</code>
 	 */
-	<T extends ActiveRecord<T>> RecordSet<T> select(final Class<T> $class, final String $query, Object... $values);
+	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final String $query, Object... $values);
 	
 	/**
 	 * 
 	 */
-	RecordSet<ActiveRecord<?>> query(final String $query, Object... $values);
+	RecordSetImpl<ActiveRecord<?>> query(final String $query, Object... $values);
 	
 	/**
 	 * Wählt ein Objekt mit der gegebenen $id aus, oder null, wenn das Objekt in der Datenbank nicht existiert.

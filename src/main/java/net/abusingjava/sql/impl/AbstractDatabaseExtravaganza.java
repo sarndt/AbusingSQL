@@ -1,10 +1,13 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.impl;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+
+import net.abusingjava.sql.DatabaseException;
+import net.abusingjava.sql.DatabaseExtravaganza;
 
 abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 	

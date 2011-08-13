@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.beans.AbusingBeans;
+import net.abusingjava.sql.impl.DatabaseSQL;
 
 @Author("Julian Fleischer")
 @Version("2011-08-13")

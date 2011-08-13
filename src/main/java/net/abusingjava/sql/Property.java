@@ -7,6 +7,7 @@ import java.util.Set;
 import net.abusingjava.*;
 import net.abusingjava.arrays.AbusingArrays;
 import net.abusingjava.reflection.AbusingReflection;
+import net.abusingjava.sql.impl.DatabaseSQL;
 
 @Author("Julian Fleischer")
 @Version("2011-08-13")
@@ -23,6 +24,7 @@ public class Property {
 	final Interface $parent;
 	final Long $min;
 	final Long $max;
+	
 	
 	Property(final Interface $parent, final Class<?> $class, final String $name) {
 		this.$parent = $parent;
@@ -78,6 +80,7 @@ public class Property {
 			throw new NotGonnaHappenException($exc);
 		}
 	}
+	
 	
 	public String getName() {
 		return $name;
