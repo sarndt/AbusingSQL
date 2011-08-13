@@ -1,8 +1,10 @@
 package net.abusingjava.sql;
 
 import java.sql.Connection;
+
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.schema.Schema;
 
 /**
  * Bietet grundlegende Funktionen für den Zugriff auf die Datenbank. DatabaseAccess-Objekte sind thread-safe.
@@ -98,4 +100,9 @@ public interface DatabaseAccess {
 	 * Sucht genau ein Objekt oder null zurück. Funktioniert wie select(Class<?>, String $query, Object... $values).
 	 */
 	<T extends ActiveRecord<T>> T selectOne(Class<T> $class, String $query, Object... $values);
+	
+	/**
+	 * Returns the Schema-object that describes this particular Database.
+	 */
+	Schema getSchema();
 }

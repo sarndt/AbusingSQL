@@ -4,14 +4,13 @@ import net.abusingjava.Author;
 import net.abusingjava.Version;
 
 @Author("Julian Fleischer")
-@Version("2011-08-08")
+@Version("2011-08-13")
 public class GenericDatabaseAccessFactory extends AbstractDatabaseAccessFactory {
 	
-	@SuppressWarnings("unchecked")
-	public GenericDatabaseAccessFactory(Class<?>... $classes) {
+	public GenericDatabaseAccessFactory(final Class<?>... $classes) {
 		super();
 		for (Class<?> $class : $classes) {
-			$schema.addInterface((Class<? extends ActiveRecord<?>>) $class);
+			$schema.addInterface($class);
 		}
 	}
 

@@ -8,18 +8,19 @@ import java.sql.SQLException;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.schema.Schema;
 
 @Author("Julian Fleischer")
-@Version("2011-08-03")
+@Version("2011-08-13")
 public class DatabaseAccessImpl implements DatabaseAccess {
 
 	final ConnectionPool $pool;
-	final DatabaseSchema $schema;
+	final Schema $schema;
 	
 	
 	Connection $connection = null;
 	
-	DatabaseAccessImpl(final ConnectionPool $pool, final DatabaseSchema $schema) {
+	DatabaseAccessImpl(final ConnectionPool $pool, final Schema $schema) {
 		this.$pool = $pool;
 		this.$schema = $schema;
 	}
@@ -55,12 +56,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	
 	@Override
 	public void dropDatabase() {
-		$schema.dropDatabase($pool);
+		// $schema.dropDatabase($pool);
 	}
 
 	@Override
 	public void createDatabase() {
-		$schema.createDatabase($pool);
+		// $schema.createDatabase($pool);
 	}
 	
 	@Override
@@ -126,6 +127,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
+	public RecordSet<ActiveRecord<?>> query(final String $query, final Object... $values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public void beginTransaction() {
 		// TODO: Transaction Management implementieren
 	}
@@ -146,9 +153,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public RecordSet<ActiveRecord<?>> query(final String $query, final Object... $values) {
-		// TODO Auto-generated method stub
-		return null;
+	public Schema getSchema() {
+		return $schema;
 	}
 
 }

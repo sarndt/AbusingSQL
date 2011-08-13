@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.schema.Schema;
 
 @Author("Julian Fleischer")
 @Version("2011-08-08")
@@ -14,10 +15,10 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	int $connectionTimeout = 1000;
 	int $poolsize = 2;
 	
-	protected final DatabaseSchema $schema;
+	protected final Schema $schema;
 	
 	protected AbstractDatabaseAccessFactory() {
-		$schema = new DatabaseSchema();
+		$schema = new Schema();
 	}
 	
 	void setReaperDelay(final int $delay) {
@@ -38,7 +39,7 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	}
 	
 	@Override
-	public DatabaseSchema getSchema() {
+	public Schema getSchema() {
 		return $schema;
 	}
 	
