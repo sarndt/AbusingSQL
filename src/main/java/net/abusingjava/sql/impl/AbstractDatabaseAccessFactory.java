@@ -4,10 +4,7 @@ import java.sql.SQLException;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.DatabaseAccess;
-import net.abusingjava.sql.DatabaseAccessFactory;
-import net.abusingjava.sql.DatabaseException;
-import net.abusingjava.sql.Schema;
+import net.abusingjava.sql.*;
 
 @Author("Julian Fleischer")
 @Version("2011-08-08")
@@ -19,9 +16,11 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	int $poolsize = 2;
 	
 	protected final Schema $schema;
+	private final DatabaseExtravaganza $extravaganza;
 	
-	protected AbstractDatabaseAccessFactory() {
+	protected AbstractDatabaseAccessFactory(final DatabaseExtravaganza $extravaganza) {
 		$schema = new Schema();
+		this.$extravaganza = $extravaganza;
 	}
 	
 	void setReaperDelay(final int $delay) {
@@ -49,7 +48,8 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	@Override
 	public DatabaseAccess newDatabaseAccess(final String $url, final String $user, final String $password) {
 		try {
-			ConnectionPool $pool = new ConnectionPool("com.mysql.jdbc.Driver", $url, $user, $password, $poolsize, $reaperDelay, $reaperTimeout, $connectionTimeout);
+			ConnectionPool $pool = new SimpleConnectionPool($extravaganza.getDriverName(),
+					$url, $user, $password, $poolsize, $reaperDelay, $reaperTimeout, $connectionTimeout);
 			return new DatabaseAccessImpl($pool, $schema);
 		} catch (SQLException $exc) {
 			throw new DatabaseException($exc);

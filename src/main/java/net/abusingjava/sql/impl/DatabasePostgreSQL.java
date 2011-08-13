@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.abusingjava.sql.DatabaseException;
+import net.abusingjava.sql.Schema;
 
 public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 
@@ -28,6 +29,17 @@ public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 		} catch (SQLException $exc) {
 			throw new DatabaseException($exc);
 		}
+	}
+
+	@Override
+	public String getDriverName() {
+		return "org.postgresql.Driver";
+	}
+
+	@Override
+	public void createDatabase(final ConnectionPool $pool, final Schema $schema) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

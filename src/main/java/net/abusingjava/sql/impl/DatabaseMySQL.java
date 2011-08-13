@@ -2,6 +2,8 @@ package net.abusingjava.sql.impl;
 
 import java.sql.ResultSet;
 
+import net.abusingjava.sql.Schema;
+
 public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 
 	@Override
@@ -19,6 +21,17 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	public Object get(final ResultSet $resultSet, final String $name) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getDriverName() {
+		return "com.mysql.jdbc.Driver";
+	}
+
+	@Override
+	public void createDatabase(final ConnectionPool $pool, final Schema $schema) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
