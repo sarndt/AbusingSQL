@@ -16,11 +16,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
 	final ConnectionPool $pool;
 	final Schema $schema;
-	
+	final DatabaseExtravaganza $extravaganza;
 	
 	Connection $connection = null;
 	
-	DatabaseAccessImpl(final ConnectionPool $pool, final Schema $schema) {
+	DatabaseAccessImpl(final DatabaseExtravaganza $extravaganza, final ConnectionPool $pool, final Schema $schema) {
+		this.$extravaganza = $extravaganza;
 		this.$pool = $pool;
 		this.$schema = $schema;
 	}
@@ -56,12 +57,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	
 	@Override
 	public void dropDatabase() {
-		// $schema.dropDatabase($pool);
+		$extravaganza.dropDatabase($pool, $schema);
 	}
 
 	@Override
 	public void createDatabase() {
-		// $schema.createDatabase($pool);
+		$extravaganza.createDatabase($pool, $schema);
 	}
 	
 	@Override

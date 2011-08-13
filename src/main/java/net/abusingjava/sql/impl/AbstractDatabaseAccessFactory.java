@@ -50,7 +50,7 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 		try {
 			ConnectionPool $pool = new SimpleConnectionPool($extravaganza.getDriverName(),
 					$url, $user, $password, $poolsize, $reaperDelay, $reaperTimeout, $connectionTimeout);
-			return new DatabaseAccessImpl($pool, $schema);
+			return new DatabaseAccessImpl($extravaganza, $pool, $schema);
 		} catch (SQLException $exc) {
 			throw new DatabaseException($exc);
 		} catch (ClassNotFoundException $exc) {

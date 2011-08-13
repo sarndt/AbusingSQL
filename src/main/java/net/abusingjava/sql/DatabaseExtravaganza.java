@@ -3,7 +3,6 @@ package net.abusingjava.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import net.abusingjava.sql.impl.ConnectionPool;
 
 public interface DatabaseExtravaganza {
 
@@ -18,4 +17,8 @@ public interface DatabaseExtravaganza {
 	String getDriverName();
 	
 	void createDatabase(ConnectionPool $pool, Schema $schema);
+
+	void dropDatabase(ConnectionPool $pool, Schema $schema);
+
+	String getSqlType(Property $property);
 }

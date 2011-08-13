@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.ConnectionPool;
 
 /**
  * A ConnectionPool that caches a certain amount of connections always.

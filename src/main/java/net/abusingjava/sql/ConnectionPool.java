@@ -1,4 +1,4 @@
-package net.abusingjava.sql.impl;
+package net.abusingjava.sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;

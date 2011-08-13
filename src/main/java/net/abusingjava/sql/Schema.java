@@ -22,19 +22,18 @@ public class Schema {
 			$interfaces.add($i);
 			
 			for (Property $p : $i.getProperties()) {
-				if ($p.isOnePart()) {
-					addInterface($p.getJavaType());
-				} else if ($p.isManyPart()) {
+				if ($p.getGenericType() != null) {
 					addInterface($p.getGenericType());
+				} else if ($p.isManyPart()) {
+					addInterface($p.getJavaType());
 				}
 			}
-			
 			for (Property $p : $i.getProperties()) {
-				if ($p.isManyPart()) {
+				if ($p.getGenericType() != null) {
 					String $fromProperty = $p.getName();
 					Interface $to = getInterface($p.getGenericType().getCanonicalName());
 					for (Property $p2 : $to.getProperties()) {
-						if ($p2.isManyPart() && ($p2.getGenericType().equals($i.$interface))) {
+						if ($i.$interface.equals($p2.getGenericType())) {
 							$manyToMany.add(new ManyToMany(this, $i.getName(), $fromProperty, $to.getName(), $p2.getName()));
 						}
 					}

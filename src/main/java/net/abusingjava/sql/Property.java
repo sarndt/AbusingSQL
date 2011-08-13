@@ -17,13 +17,13 @@ public class Property {
 	final String $sqlName;
 	final Class<?> $javaType;
 	final Class<?> $genericType;
-	final boolean $isOnePart;
 	final boolean $isManyPart;
 	final String $uniqueKey;
 	final boolean $isNullable;
 	final Interface $parent;
 	final Long $min;
 	final Long $max;
+	final Object $default;
 	
 	
 	Property(final Interface $parent, final Class<?> $class, final String $name) {
@@ -36,15 +36,12 @@ public class Property {
 			$javaType = $getter.getReturnType();
 			if (Set.class.isAssignableFrom($javaType)) {
 				$genericType = AbusingReflection.getGenericBaseType($getter.getGenericReturnType());
-				$isOnePart = false;
-				$isManyPart = true;
+				$isManyPart = false;
 			} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
 				$genericType = null;
-				$isOnePart = true;
-				$isManyPart = false;
+				$isManyPart = true;
 			} else {
 				$genericType = null;
-				$isOnePart = false;
 				$isManyPart = false;
 			}
 			Method $setter = $class.getMethod("set" + $name, $javaType);
@@ -69,21 +66,41 @@ public class Property {
 			}
 			this.$min = $min;
 			this.$max = $max;
-			this.$isNullable = !AbusingArrays.containsType($annotations, NotNull.class);
+			this.$isNullable = !AbusingArrays.containsType($annotations, NotNull.class)
+					&& ($javaType.getSuperclass() != null);
 			if (AbusingArrays.containsType($annotations, Unique.class)) {
 				Unique $key = AbusingArrays.firstOfType($annotations, Unique.class);
 				this.$uniqueKey = $key.value();
 			} else {
 				this.$uniqueKey = null;
 			}
+			if (AbusingArrays.containsType($annotations, Default.class)) {
+				Default $default = AbusingArrays.firstOfType($annotations, Default.class);
+				if (($javaType == boolean.class) || ($javaType == Boolean.class)) {
+					this.$default = $default.booleanValue();
+				} else if (($javaType == int.class) || ($javaType == Integer.class)) {
+					this.$default = $default.intValue();
+				} else {
+					this.$default = null;
+				}
+			} else {
+				$default = null;
+			}
 		} catch (NoSuchMethodException $exc) {
 			throw new NotGonnaHappenException($exc);
 		}
 	}
 	
+	public Object getDefault() {
+		return $default;
+	}
 	
 	public String getName() {
 		return $name;
+	}
+
+	public String getSqlName() {
+		return $sqlName;
 	}
 	
 	public Class<?> getJavaType() {
@@ -92,10 +109,6 @@ public class Property {
 	
 	public Class<?> getGenericType() {
 		return $genericType;
-	}
-	
-	public boolean isOnePart() {
-		return $isOnePart;
 	}
 	
 	public boolean isManyPart() {
@@ -114,11 +127,11 @@ public class Property {
 		return $isNullable;
 	}
 	
-	public long getMin() {
+	public Long getMin() {
 		return $min;
 	}
 	
-	public long getMax() {
+	public Long getMax() {
 		return $max;
 	}
 	
@@ -126,4 +139,5 @@ public class Property {
 	public String toString() {
 		return getName();
 	}
+
 }
