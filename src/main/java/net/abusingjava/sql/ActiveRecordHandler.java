@@ -19,7 +19,7 @@ import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.strings.AbusingStrings;
 
-import com.mysql.jdbc.Statement;
+import java.sql.Statement;
 
 /**
  * Implementiert einen ActiveRecord zur Runtime.
