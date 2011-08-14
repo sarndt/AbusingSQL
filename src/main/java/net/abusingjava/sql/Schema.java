@@ -46,6 +46,15 @@ public class Schema {
 		return $interfaces.toArray(new Interface[$interfaces.size()]);
 	}
 	
+	public Interface getInterface(final Class<?> $class) {
+		for (Interface $i : $interfaces) {
+			if ($i.getJavaType() == $class) {
+				return $i;
+			}
+		}
+		return null;
+	}
+	
 	public Interface getInterface(final String $canonicalName) {
 		for (Interface $i : $interfaces) {
 			if ($i.getName().equals($canonicalName)) {

@@ -105,4 +105,9 @@ public interface DatabaseAccess {
 	 * Returns the Schema-object that describes this particular Database.
 	 */
 	Schema getSchema();
+	
+	/**
+	 * 
+	 */
+	DatabaseExtravaganza getDatabaseExtravaganza();
 }

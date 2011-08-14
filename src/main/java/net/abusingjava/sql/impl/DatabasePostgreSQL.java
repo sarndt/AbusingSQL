@@ -3,11 +3,14 @@ package net.abusingjava.sql.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import net.abusingjava.sql.ConnectionPool;
-import net.abusingjava.sql.DatabaseException;
-import net.abusingjava.sql.Property;
-import net.abusingjava.sql.Schema;
+import net.abusingjava.Author;
+import net.abusingjava.Experimental;
+import net.abusingjava.Version;
+import net.abusingjava.sql.*;
 
+@Author("Julian Fleischer")
+@Version("2011-08-13")
+@Experimental
 public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 
 	@Override
@@ -50,6 +53,12 @@ public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 
 	@Override
 	public String getSqlType(final Property $property) {
+		return null;
+	}
+
+	@Override
+	public String getDeleteQuery(final Interface $interface, final int $id) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

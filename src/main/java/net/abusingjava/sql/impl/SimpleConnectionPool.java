@@ -10,7 +10,7 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.ConnectionPool;
 
 /**
- * A ConnectionPool that caches a certain amount of connections always.
+ * A simple ConnectionPool that caches a certain amount of connections always.
  */
 @Author("Julian Fleischer")
 @Version("2011-08-13")

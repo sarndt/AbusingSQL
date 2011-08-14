@@ -51,7 +51,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	public <T extends ActiveRecord<T>> T create(final Class<T> $class) {
 		@SuppressWarnings("unchecked")
 		T $instance = (T) Proxy.newProxyInstance($class.getClassLoader(), new Class<?>[] { $class },
-				new ActiveRecordHandler(this, $class));
+				new ActiveRecordHandler(this, $schema.getInterface($class)));
 		return $instance;
 	}
 	
@@ -72,10 +72,11 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 			try {
 				PreparedStatement $stmt = $c.prepareStatement($query);
 				for (int $i = 0; $i < $values.length; $i++) {
-					ActiveRecordHandler.setValue($stmt, $i+1, $values[$i]);
+					// TODO FIXME FIXME FIXME FIXME FIXME
+					// ActiveRecordHandler.setValue($stmt, $i+1, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
-				return new RecordSetImpl<T>(this, $result, $class);
+				return new RecordSetImpl<T>(this, $result, $schema.getInterface($class));
 			} catch (SQLException $exc) {
 				throw $exc;
 			} finally {
@@ -156,6 +157,11 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	@Override
 	public Schema getSchema() {
 		return $schema;
+	}
+
+	@Override
+	public DatabaseExtravaganza getDatabaseExtravaganza() {
+		return $extravaganza;
 	}
 
 }

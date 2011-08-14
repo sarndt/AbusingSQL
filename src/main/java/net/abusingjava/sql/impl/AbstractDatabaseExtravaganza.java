@@ -6,9 +6,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import net.abusingjava.Author;
+import net.abusingjava.Version;
 import net.abusingjava.sql.DatabaseException;
 import net.abusingjava.sql.DatabaseExtravaganza;
 
+@Author("Julian Fleischer")
+@Version("2011-08-13")
 abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 	
 	@Override

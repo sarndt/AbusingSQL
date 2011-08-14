@@ -5,9 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import net.abusingjava.Author;
+import net.abusingjava.Version;
 import net.abusingjava.sql.*;
 import net.abusingjava.strings.AbusingStrings;
 
+@Author("Julian Fleischer")
+@Version("2011-08-13")
 public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 
 	@Override
@@ -155,7 +159,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 				$builder.append("TEXT");
 			}
 		} else if ($javaType == Date.class) {
-			$builder.append("DATETIME");
+			$builder.append("TIMESTAMP DEFAULT 0");
 		} else if ($javaType == byte[].class) {
 			if ($property.getMax() != null) {
 				$builder.append("VARBINARY(");
@@ -218,6 +222,11 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 		} catch (SQLException $exc) {
 			throw new DatabaseException($exc);
 		}
+	}
+
+	@Override
+	public String getDeleteQuery(final Interface $interface, final int $id) {
+		return "DELETE FROM `" + $interface.getSqlName() + "` WHERE `id` = $id";
 	}
 
 }

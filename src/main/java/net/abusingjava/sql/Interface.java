@@ -95,6 +95,10 @@ public class Interface {
 		}
 		return null;
 	}
+	
+	public Class<?> getJavaType() {
+		return $interface;
+	}
 
 	@Override
 	public boolean equals(final Object $o) {
