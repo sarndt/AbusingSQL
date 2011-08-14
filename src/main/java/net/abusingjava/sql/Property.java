@@ -107,6 +107,11 @@ public class Property {
 		return $javaType;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T extends ActiveRecord<T>> Class<T> getRecordType() {
+		return (Class<T>) $javaType;
+	}
+	
 	public Class<?> getGenericType() {
 		return $genericType;
 	}

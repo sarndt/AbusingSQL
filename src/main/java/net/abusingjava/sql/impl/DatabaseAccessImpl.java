@@ -48,7 +48,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<T>> T create(final Class<T> $class) {
+	public <T extends ActiveRecord<?>> T create(final Class<T> $class) {
 		@SuppressWarnings("unchecked")
 		T $instance = (T) Proxy.newProxyInstance($class.getClassLoader(), new Class<?>[] { $class },
 				new ActiveRecordHandler(this, $schema.getInterface($class)));
@@ -66,7 +66,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final String $query, final Object... $values) {
+	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final String $query, final Object... $values) {
 		try {
 			Connection $c = $pool.getConnection();
 			try {
@@ -88,7 +88,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public <T extends ActiveRecord<T>> T selectOne(final Class<T> $class, final String $query, final Object... $values) {
+	public <T extends ActiveRecord<?>> T selectOne(final Class<T> $class, final String $query, final Object... $values) {
 		RecordSetImpl<T> $result = select($class, $query, $values);
 		if ($result.size() > 0) {
 			return $result.get(0);
@@ -97,28 +97,28 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "`";
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final int $limit, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` LIMIT " + $limit;
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final int $offset, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final int $offset, final int $limit, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` LIMIT " + $limit + " OFFSET " + $offset;
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<T>> T selectById(final Class<T> $class, final int $id) {
+	public <T extends ActiveRecord<?>> T selectById(final Class<T> $class, final int $id) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` WHERE `id` = " + $id;
 		RecordSetImpl<T> $result = select($class, $sqlQuery);

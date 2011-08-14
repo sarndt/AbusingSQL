@@ -48,17 +48,17 @@ public interface DatabaseAccess {
 	/**
 	 * Führt ein Select in der durch $class spezifizierten Tabelle aus, joint optional die angegebenen $joinClasses.
 	 */
-	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, Class<?>... $joinClasses);
+	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, Class<?>... $joinClasses);
 	
 	/**
 	 * Wie select(), aber mit $limit.
 	 */
-	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, int $limit, Class<?>... $joinClasses);
+	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, int $limit, Class<?>... $joinClasses);
 	
 	/**
 	 * Wie select(), aber mit $offset und $limit.
 	 */
-	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
+	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
 	
 	/**
 	 * Wie select(), aber mit einem selbst-definierten Query, der auch Fragezeichen-Parameter beinhalten kann (wird durch $values aufgefüllt).
@@ -66,7 +66,7 @@ public interface DatabaseAccess {
 	 * Beispiel:<br />
 	 * <code>$db.select(Mitarbeiter.class, "SELECT * FROM mitarbeiter WHERE vorname = ? AND nachname = ?", "Anton", "Blechdach");</code>
 	 */
-	<T extends ActiveRecord<T>> RecordSetImpl<T> select(final Class<T> $class, final String $query, Object... $values);
+	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final String $query, Object... $values);
 	
 	/**
 	 * 
@@ -76,7 +76,7 @@ public interface DatabaseAccess {
 	/**
 	 * Wählt ein Objekt mit der gegebenen $id aus, oder null, wenn das Objekt in der Datenbank nicht existiert.
 	 */
-	<T extends ActiveRecord<T>> T selectById(Class<T> $class, int $id);
+	<T extends ActiveRecord<?>> T selectById(Class<T> $class, int $id);
 	
 	/**
 	 * Erstellt einen neuen ActiveRecord von einem Interface.
@@ -84,7 +84,7 @@ public interface DatabaseAccess {
 	 * @param $class Die Interface-Klasse
 	 * @throws IllegalArgumentException Wenn $class kein Interface darstellt.
 	 */
-	<T extends ActiveRecord<T>> T create(final Class<T> $class);
+	<T extends ActiveRecord<?>> T create(final Class<T> $class);
 
 	/**
 	 * Löscht alle Tabellen in der Datenbank.
@@ -99,7 +99,7 @@ public interface DatabaseAccess {
 	/**
 	 * Sucht genau ein Objekt oder null zurück. Funktioniert wie select(Class<?>, String $query, Object... $values).
 	 */
-	<T extends ActiveRecord<T>> T selectOne(Class<T> $class, String $query, Object... $values);
+	<T extends ActiveRecord<?>> T selectOne(Class<T> $class, String $query, Object... $values);
 	
 	/**
 	 * Returns the Schema-object that describes this particular Database.

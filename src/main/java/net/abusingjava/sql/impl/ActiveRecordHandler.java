@@ -26,6 +26,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 	PropertyChangeSupport $propertyChangeSupport = null;
 	Map<String, Object> $oldValues = new HashMap<String, Object>();
 	Map<String, Object> $newValues = new HashMap<String, Object>();
+	Map<String, ActiveRecord<?>> $resolvedRecords = new HashMap<String, ActiveRecord<?>>();
 	
 	Integer $id = null;
 
@@ -47,7 +48,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 	public Object invoke(final Object $proxy, final Method $method, final Object[] $args) throws Throwable {
 
 		String $methodName = $method.getName().intern();
-
 		
 		if ($methodName == "getId") {
 			return $id;
@@ -61,7 +61,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 		} else if ($methodName == "set") {
 			String $propertyName = (String) $args[0];
 			if ($propertyChangeSupport == null) {
-
 				$newValues.put($propertyName, $args[1]);	
 			} else {
 				Object $oldValue = null;
@@ -75,8 +74,30 @@ public class ActiveRecordHandler implements InvocationHandler {
 			}
 			
 		} else if ($methodName.startsWith("get")) {
+			
 			String $propertyName = $methodName.substring(3);
 			Property $property = $interface.getProperty($propertyName);
+			
+			if ($property.isManyPart()) {
+				if ($resolvedRecords.containsKey($propertyName)) {
+					return $resolvedRecords.get($propertyName);
+				}
+				Integer $id = (Integer) ($newValues.containsKey($propertyName)
+						? $newValues.get($propertyName)
+						: ($oldValues.containsKey($propertyName)
+								? $oldValues.get($propertyName)
+								: null));
+				if ($id == null) {
+					return null;
+				}
+				@SuppressWarnings("unchecked")
+				ActiveRecord<?> $record = $dbAccess.selectById((Class<? extends ActiveRecord<?>>) $property.getJavaType(), (int) $id);
+				$resolvedRecords.put($propertyName, $record);
+				return $record;
+				
+			} else if ($property.getGenericType() != null) {
+				
+			}
 			if ($newValues.containsKey($propertyName)) {
 				return $newValues.get($propertyName);
 			} else if ($oldValues.containsKey($propertyName)) {
@@ -88,6 +109,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			Property $property = $interface.getProperty($propertyName);
 			if ($args[0] instanceof ActiveRecord) {
 				$args[0] = ((ActiveRecord<?>)$args[0]).getId();
+				$resolvedRecords.put($propertyName, (ActiveRecord<?>) $args[0]);
 			}
 			$newValues.put($property.getSqlName(), $args[0]);
 			if ($propertyChangeSupport != null) {
@@ -125,13 +147,13 @@ public class ActiveRecordHandler implements InvocationHandler {
 				$newValues.put("last_modified", $now);
 			}
 			
-			if ($args.length == 1) {
+			if ($args == null || $args.length < 1) {
 				if ($id == null) {
 					// insert
 				} else {
 					// update
 				}
-			} else if ($args.length < 1) {
+			} else if ($args.length == 1) {
 				if ($id == null) {
 					// insert
 				} else {
@@ -170,9 +192,10 @@ public class ActiveRecordHandler implements InvocationHandler {
 			}
 			return new PropertyChangeListener[0];
 		}
-		//return $proxy;
+		return $proxy;
 		
-		
+		/*
+
 		if ($methodName == "saveChanges") {
 			if ($proxy instanceof Entity) {
 				Date $now = new Date(System.currentTimeMillis());
@@ -233,6 +256,8 @@ public class ActiveRecordHandler implements InvocationHandler {
 			$newValues = new HashMap<String,Object>();
 		}
 		return $proxy;
+		
+		*/
 	}
 
 }
