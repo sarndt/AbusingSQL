@@ -16,7 +16,7 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.*;
 
 /**
- * Implementiert einen ActiveRecord zur Runtime.
+ * Implements an ActiveRecord at Runtime.
  */
 @Author("Julian Fleischer")
 @Version("2011-08-15")
