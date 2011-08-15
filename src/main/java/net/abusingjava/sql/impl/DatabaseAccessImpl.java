@@ -72,7 +72,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 			try {
 				PreparedStatement $stmt = $c.prepareStatement($query);
 				for (int $i = 0; $i < $values.length; $i++) {
-					$extravaganza.set($stmt, $i, $values[$i]);
+					$extravaganza.set($stmt, $i + 1, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
 				return new RecordSetImpl<T>(this, $result, $schema.getInterface($class));
