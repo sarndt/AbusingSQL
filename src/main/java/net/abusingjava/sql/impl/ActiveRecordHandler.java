@@ -62,6 +62,11 @@ public class ActiveRecordHandler implements InvocationHandler {
 		if ($methodName == "getId") {
 			return $id;
 			
+		} else if ($methodName == "getPropertyChangeListeners") {
+			if ($propertyChangeSupport != null) {
+				return $propertyChangeSupport.getPropertyChangeListeners();
+			}
+			return new PropertyChangeListener[0];
 		} else if ($methodName == "get") {
 			if ($newValues.containsKey($args[0])) {
 				return $newValues.get($args[0]);
@@ -147,11 +152,15 @@ public class ActiveRecordHandler implements InvocationHandler {
 				}
 				throw new UnsupportedOperationException("We’re working on this.");
 			}
-			$newValues.put($property.getSqlName(), $args[0]);
+			Object $oldValue = null;
+			if ($newValues.containsKey($propertyName)) {
+				$oldValue = $newValues.get($propertyName);
+			} else if ($oldValues.containsKey($propertyName)) {
+				$oldValue = $oldValues.get($propertyName);
+			}
+			$newValues.put($propertyName, $args[0]);
 			if ($propertyChangeSupport != null) {
-				$propertyChangeSupport.firePropertyChange($propertyName,
-						$oldValues.get($property.getSqlName()),
-						$newValues.get($property.getSqlName()));
+				$propertyChangeSupport.firePropertyChange($propertyName, $oldValue, $newValues.get($propertyName));
 			}
 			
 		} else if ($methodName == "equals") {
@@ -295,11 +304,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 				$propertyChangeSupport.removePropertyChangeListener((PropertyChangeListener) $args[0]);
 			}
 			
-		} else if ($methodName == "getPropertyChangeListeners") {
-			if ($propertyChangeSupport != null) {
-				return $propertyChangeSupport.getPropertyChangeListeners();
-			}
-			return new PropertyChangeListener[0];
 		}
 		return $proxy;
 	}
