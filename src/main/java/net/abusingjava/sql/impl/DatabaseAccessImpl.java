@@ -135,26 +135,6 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public void beginTransaction() {
-		// TODO: Transaction Management implementieren
-	}
-
-	@Override
-	public void rollbackTransaction() {
-		
-	}
-	
-	@Override
-	public void abortTransaction() {
-		
-	}
-	
-	@Override
-	public void commitTransaction() {
-		
-	}
-
-	@Override
 	public Schema getSchema() {
 		return $schema;
 	}

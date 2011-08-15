@@ -4,100 +4,71 @@ import java.sql.Connection;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.impl.RecordSetImpl;
 
 /**
- * Bietet grundlegende Funktionen für den Zugriff auf die Datenbank. DatabaseAccess-Objekte sind thread-safe.
+ * 
  */
 @Author("Julian Fleischer")
-@Version("2011-08-03")
+@Version("2011-08-15")
 public interface DatabaseAccess {
 
 	/**
-	 * Fordere eine java.sql.Connection an.
+	 * Retrieves a Connection from the underlying ConnectionPool (or other kind of Connection-Provider, depending on the Implementation).
 	 */
 	Connection getConnection();
 
 	/**
-	 * Gib eine Connection zurück an den zu Grunde liegenden Connection Pool.
+	 * Gives a Connection back to the underlying ConnectionPool (or other kind of Connection-Provider, e.g. closes the Connection).
 	 */
 	void release(final Connection $connection);
 
 	/**
-	 * Beginnt eine Transaction.
+	 * Selects all objects of a certain $class from the corresponding Table.
 	 */
-	void beginTransaction();
+	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, Class<?>... $joinClasses);
 	
 	/**
-	 * Beendet eine Transaction druch einen Commit. Im Fehlerfall gibt es eine DatabaseException (unchecked).
-	 * 
-	 * Hinterher besteht sicher keine Transaction mehr.
+	 * Like select(), but with a $limit.
 	 */
-	void commitTransaction();
-
-	/**
-	 * Setzt die Änderungen innerhalb einer Transaction zurück, ohne diese zu beenden.
-	 */
-	void rollbackTransaction();
+	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $limit, Class<?>... $joinClasses);
 	
 	/**
-	 * Bricht die Transaction zurück, also wie rollback() plus, dass man hinterher keine Transaction mehr offen hat.
+	 * Like select(), but with $offset and $limit.
 	 */
-	void abortTransaction();
-
-	/**
-	 * Führt ein Select in der durch $class spezifizierten Tabelle aus, joint optional die angegebenen $joinClasses.
-	 */
-	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, Class<?>... $joinClasses);
-	
-	/**
-	 * Wie select(), aber mit $limit.
-	 */
-	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, int $limit, Class<?>... $joinClasses);
-	
-	/**
-	 * Wie select(), aber mit $offset und $limit.
-	 */
-	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
-	
-	/**
-	 * Wie select(), aber mit einem selbst-definierten Query, der auch Fragezeichen-Parameter beinhalten kann (wird durch $values aufgefüllt).
-	 * <p>
-	 * Beispiel:<br />
-	 * <code>$db.select(Mitarbeiter.class, "SELECT * FROM mitarbeiter WHERE vorname = ? AND nachname = ?", "Anton", "Blechdach");</code>
-	 */
-	<T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final String $query, Object... $values);
+	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
 	
 	/**
 	 * 
 	 */
-	RecordSetImpl<ActiveRecord<?>> query(final String $query, Object... $values);
+	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final String $query, Object... $values);
 	
 	/**
-	 * Wählt ein Objekt mit der gegebenen $id aus, oder null, wenn das Objekt in der Datenbank nicht existiert.
+	 * 
+	 */
+	RecordSet<ActiveRecord<?>> query(final String $preparedQuery, Object... $values);
+	
+	/**
+	 * 
 	 */
 	<T extends ActiveRecord<?>> T selectById(Class<T> $class, int $id);
 	
 	/**
-	 * Erstellt einen neuen ActiveRecord von einem Interface.
 	 * 
-	 * @param $class Die Interface-Klasse
-	 * @throws IllegalArgumentException Wenn $class kein Interface darstellt.
 	 */
 	<T extends ActiveRecord<?>> T create(final Class<T> $class);
 
 	/**
-	 * Löscht alle Tabellen in der Datenbank.
+	 * Drops all Tables belonging to this Schema from the current Database.
 	 */
 	void dropDatabase();
 	
 	/**
-	 * Erstelle alle Tabellen der Datenbank neu.
+	 * Creates all Tables belonging to this Schema within the current Database.
 	 */
 	void createDatabase();
 
 	/**
-	 * Sucht genau ein Objekt oder null zurück. Funktioniert wie select(Class<?>, String $query, Object... $values).
+	 * Like select() with a $limit of 1, returns null in case of an empty result set.
 	 */
 	<T extends ActiveRecord<?>> T selectOne(Class<T> $class, String $query, Object... $values);
 	
@@ -107,12 +78,12 @@ public interface DatabaseAccess {
 	Schema getSchema();
 	
 	/**
-	 * 
+	 * Retrieves the Database-oddities specific to the current database.
 	 */
 	DatabaseExtravaganza getDatabaseExtravaganza();
 	
 	/**
-	 * 
+	 * Closes this DatabaseAccess-object (e.g. releases all internally pooled connections).
 	 */
 	void close();
 }

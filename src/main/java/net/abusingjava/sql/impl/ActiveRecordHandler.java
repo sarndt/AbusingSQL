@@ -136,7 +136,13 @@ public class ActiveRecordHandler implements InvocationHandler {
 			// TODO: hashCode
 			
 		} else if ($methodName == "delete") {
-			Connection $c = $dbAccess.getConnection();
+			Connection $c = null;
+			if ($args.length == 1) {
+				$c = (Connection) $args[0];
+			}
+			if ($c == null) {
+				$c = $dbAccess.getConnection();
+			}
 			try {
 				$dbAccess.getDatabaseExtravaganza().doDelete($c, $interface.getSqlName(), $id);
 				$id = null;
@@ -156,17 +162,31 @@ public class ActiveRecordHandler implements InvocationHandler {
 				}
 				$newValues.put("last_modified", $now);
 			}
-			Connection $c = $dbAccess.getConnection();
+			Connection $c = null;
 			int $depth = 0;
 			if ($args.length == 1) {
-				$depth = (Integer) $args[0];
+				if ($args[0] instanceof Integer) {
+					$depth = (Integer) $args[0];
+				} else {
+					$c = (Connection) $args[0];
+				}
+			} else if ($args.length == 2) {
+				$c = (Connection) $args[0];
+				$depth = (Integer) $args[1];
 			}
+			if ($c == null) {
+				$c = $dbAccess.getConnection();
+			}
+			boolean $commit = false;
 			if ($depth > 0) {
-				// BEGIN TRANSACTION
+				if ($c.getAutoCommit()) {
+					$commit = true;
+					$c.setAutoCommit(false);
+				}
 				for (Entry<String,ActiveRecord<?>> $e : $resolvedRecords.entrySet()) {
 					ActiveRecord<?> $o = $e.getValue();
 					if (($o != null) && $o.hasChanges()) {
-						$o.saveChanges($depth - 1);
+						$o.saveChanges($c, $depth - 1);
 						$newValues.put($e.getKey(), $o.getId());
 					}
 				}
@@ -199,8 +219,14 @@ public class ActiveRecordHandler implements InvocationHandler {
 			$oldValues = $newValues;
 			$newValues = new HashMap<String,Object>();
 			
-			if ($args.length == 1) {
-				// COMMIT TRANSACTION
+			if ($commit) {
+				try {
+					$c.commit();
+				} catch (SQLException $exc) {
+					throw new DatabaseException($exc);
+				} finally {
+					$c.setAutoCommit(true);
+				}
 			}
 		} else if ($methodName == "toString") {
 			return $interface.getName() + '#' + $id;

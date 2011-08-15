@@ -1,16 +1,14 @@
 package net.abusingjava.sql.impl;
 
 import java.lang.reflect.Proxy;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.ActiveRecord;
-import net.abusingjava.sql.DatabaseAccess;
-import net.abusingjava.sql.Interface;
-import net.abusingjava.sql.RecordSet;
+import net.abusingjava.sql.*;
 
 @Author("Julian Fleischer")
 @Version("2011-08-13")
@@ -33,22 +31,38 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	
 	@Override
 	public void saveChanges() {
-		$dbAccess.beginTransaction();
-		for (T $obj : this) {
-			if ($obj.hasChanges()) {
-				$obj.saveChanges();
+		Connection $c = $dbAccess.getConnection();
+		try {
+			$c.setAutoCommit(false);
+			for (T $obj : this) {
+				if ($obj.hasChanges()) {
+					$obj.saveChanges($c);
+				}
 			}
+			$c.commit();
+			$c.setAutoCommit(true);
+		} catch (SQLException $exc) {
+			throw new DatabaseException($exc);
+		} finally {
+			$dbAccess.release($c);
 		}
-		$dbAccess.commitTransaction();
 	}
 	
 	@Override
 	public void deleteAll() {
-		$dbAccess.beginTransaction();
-		for (T $obj : this) {
-			$obj.delete();
+		Connection $c = $dbAccess.getConnection();
+		try {
+			$c.setAutoCommit(false);
+			for (T $obj : this) {
+				$obj.delete($c);
+			}
+			$c.commit();
+			$c.setAutoCommit(true);
+		} catch (SQLException $exc) {
+			throw new DatabaseException($exc);
+		} finally {
+			$dbAccess.release($c);
 		}
-		$dbAccess.commitTransaction();
 	}
 
 }
