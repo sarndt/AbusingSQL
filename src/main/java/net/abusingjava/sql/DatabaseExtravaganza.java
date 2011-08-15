@@ -20,16 +20,6 @@ public interface DatabaseExtravaganza {
 	/**
 	 * 
 	 */
-	Object get(ResultSet $resultSet, int $index);
-	
-	/**
-	 * 
-	 */
-	Object get(ResultSet $resultSet, String $name);
-	
-	/**
-	 * 
-	 */
 	void set(PreparedStatement $stmt, int $index, Object $value);
 
 	/**
@@ -81,5 +71,10 @@ public interface DatabaseExtravaganza {
 	 * 
 	 */
 	Object get(ResultSet $resultSet, String $column, Class<?> $javaType) throws SQLException;
+
+	/**
+	 * 
+	 */
+	Object get(ResultSet $resultSet, int $i, int columnType);
 
 }

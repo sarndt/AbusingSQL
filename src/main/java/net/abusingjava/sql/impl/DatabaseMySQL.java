@@ -20,18 +20,6 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	}
 
 	@Override
-	public Object get(final ResultSet $resultSet, final int $index) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object get(final ResultSet $resultSet, final String $name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getDriverName() {
 		return "com.mysql.jdbc.Driver";
 	}
@@ -269,7 +257,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 		} else if ($javaType.isEnum()) {
 			$value = $resultSet.getString($column);
 			if (!$resultSet.wasNull()) {
-				return callback(Enum.class, "valueOf").call((String) $value);
+				return callback(Enum.class, "valueOf").call($javaType, $value);
 			}
 		} else if (($javaType == short.class) || ($javaType == Short.class)) {
 			$value = $resultSet.getShort($column);
@@ -281,9 +269,6 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 		if ($resultSet.wasNull()) {
 			$value = null;
 		}
-	
 		return $value;
 	}
-
-	
 }

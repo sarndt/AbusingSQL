@@ -25,17 +25,17 @@ public interface DatabaseAccess {
 	/**
 	 * Selects all objects of a certain $class from the corresponding Table.
 	 */
-	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, Class<?>... $joinClasses);
+	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class);
 	
 	/**
 	 * Like select(), but with a $limit.
 	 */
-	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $limit, Class<?>... $joinClasses);
+	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $limit);
 	
 	/**
 	 * Like select(), but with $offset and $limit.
 	 */
-	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
+	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $offset, int $limit);
 	
 	/**
 	 * 

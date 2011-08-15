@@ -96,21 +96,21 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, null, null);
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final int $limit) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, null, $limit);
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final int $offset, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final int $offset, final int $limit) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
 		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, $offset, $limit);
 		return select($class, $sqlQuery);

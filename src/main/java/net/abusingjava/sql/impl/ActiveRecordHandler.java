@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -32,6 +33,17 @@ public class ActiveRecordHandler implements InvocationHandler {
 	
 	Integer $id = null;
 
+	ActiveRecordHandler(final DatabaseAccess $dbAccess, final ResultSet $resultSet) throws SQLException {
+		this.$dbAccess = $dbAccess;
+		this.$interface = null;
+		
+		ResultSetMetaData $meta = $resultSet.getMetaData();
+		DatabaseExtravaganza $extravaganza = $dbAccess.getDatabaseExtravaganza();
+		for (int $i = 1; $i <= $meta.getColumnCount(); $i++) {
+			$oldValues.put($meta.getColumnName($i), $extravaganza.get($resultSet, $i, $meta.getColumnType($i)));
+		}
+	}
+	
 	ActiveRecordHandler(final DatabaseAccess $dbAccess, final Interface $interface, final ResultSet $resultSet) throws SQLException {
 		this.$dbAccess = $dbAccess;
 		this.$interface = $interface;
@@ -131,7 +143,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 					return $records;
 				}
 				return $resolvedSets.get($property.getSqlName());
-				// throw new UnsupportedOperationException("We’re working on this: " + $property.getOnePart());
 			}
 			if ($newValues.containsKey($propertyName)) {
 				return $newValues.get($propertyName);
