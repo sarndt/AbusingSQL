@@ -50,6 +50,11 @@ public interface DatabaseAccess {
 	/**
 	 * 
 	 */
+	ActiveRecord<?> querySingle(final String $preparedQuery, Object... $values);
+	
+	/**
+	 * 
+	 */
 	<T extends ActiveRecord<?>> T selectById(Class<T> $class, int $id);
 	
 	/**

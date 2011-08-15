@@ -60,10 +60,9 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 
 	@Override
 	public String makeSelectQuery(final String $table, final int $id) {
-		return "SELECT * FROM " + escapeName($table) + "WHERE " + escapeName("id") + " = " + $id;
+		return "SELECT * FROM " + escapeName($table) + " WHERE " + escapeName("id") + " = " + $id;
 	}
 	
-
 	@Override
 	public Object get(final ResultSet $resultSet, final int $i, final int $columnType) {
 		try {

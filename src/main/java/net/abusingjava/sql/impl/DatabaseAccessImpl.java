@@ -149,6 +149,31 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
+	public ActiveRecord<?> querySingle(final String $query, final Object... $values) {
+		try {
+			Connection $c = $pool.getConnection();
+			try {
+				PreparedStatement $stmt = $c.prepareStatement($query);
+				for (int $i = 0; $i < $values.length; $i++) {
+					$extravaganza.set($stmt, $i, $values[$i]);
+				}
+				ResultSet $result = $stmt.executeQuery();
+				ObjectRecordSet $records = new ObjectRecordSet(this, $result);
+				if ($records.isEmpty()) {
+					return null;
+				}
+				return $records.getFirst();
+			} catch (SQLException $exc) {
+				throw $exc;
+			} finally {
+				$pool.release($c);
+			}
+		} catch (SQLException $exc) {
+			throw new DatabaseException($exc);
+		}
+	}
+	
+	@Override
 	public Schema getSchema() {
 		return $schema;
 	}
