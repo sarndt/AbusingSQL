@@ -16,4 +16,8 @@ public interface ConnectionPool {
 	 */
 	boolean release(final Connection $connection);
 
+	/**
+	 * Shutdown this connection pool.
+	 */
+	void close();
 }

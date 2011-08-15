@@ -67,7 +67,7 @@ public class Property {
 			this.$min = $min;
 			this.$max = $max;
 			this.$isNullable = !AbusingArrays.containsType($annotations, NotNull.class)
-					&& ($javaType.getSuperclass() != null);
+					&& !$javaType.isPrimitive();
 			if (AbusingArrays.containsType($annotations, Unique.class)) {
 				Unique $key = AbusingArrays.firstOfType($annotations, Unique.class);
 				this.$uniqueKey = $key.value();

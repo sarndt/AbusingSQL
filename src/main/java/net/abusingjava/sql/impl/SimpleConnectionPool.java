@@ -165,4 +165,20 @@ public class SimpleConnectionPool implements ConnectionPool {
 		}
 		return false;
 	}
+	
+	@Override
+	public void close() {
+		for (ConnectionObject $o : $connections) {
+			try {
+				if (!$o.$connection.getAutoCommit()) {
+					$o.$connection.commit();
+				}
+			} catch (SQLException $exc) {
+			}
+			try {
+				$o.$connection.close();
+			} catch (SQLException $exc) {
+			}
+		}
+	}
 }

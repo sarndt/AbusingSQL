@@ -164,4 +164,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		return $extravaganza;
 	}
 
+	@Override
+	public void close() {
+		$pool.close();
+	}
 }

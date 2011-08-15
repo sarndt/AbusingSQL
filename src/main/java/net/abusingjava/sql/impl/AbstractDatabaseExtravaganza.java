@@ -36,10 +36,22 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 				$stmt.setDouble($index, (Double)$value);
 			} else if ($value instanceof BigDecimal) {
 				$stmt.setBigDecimal($index, (BigDecimal)$value);
+			} else if ($value instanceof Short) {
+				$stmt.setShort($index, (Short)$value);
+			} else if ($value instanceof Byte) {
+				$stmt.setByte($index, (Byte)$value);
+			} else if ($value == null) {
+				$stmt.setNull($index, 0);
 			}
 		} catch (SQLException $exc) {
 			throw new DatabaseException($exc);
 		}
 	}
 	
+	protected void prepare(final PreparedStatement $stmt, final Object[] $values) {
+		int $i = 0;
+		for (Object $o : $values) {
+			set($stmt, ++$i, $o);
+		}
+	}
 }

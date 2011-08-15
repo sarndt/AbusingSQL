@@ -4,21 +4,23 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.*;
-import net.abusingjava.strings.AbusingStrings;
 
 /**
  * Implementiert einen ActiveRecord zur Runtime.
  */
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 public class ActiveRecordHandler implements InvocationHandler {
 
 	final DatabaseAccess $dbAccess;
@@ -34,9 +36,14 @@ public class ActiveRecordHandler implements InvocationHandler {
 		this.$dbAccess = $dbAccess;
 		this.$interface = $interface;
 		
-		while ($resultSet.next()) {
-			
+		for (Property $p : $interface.getProperties()) {
+			try {
+				$oldValues.put($p.getSqlName(),
+					$dbAccess.getDatabaseExtravaganza().get($resultSet, $p.getSqlName(), $p.getJavaType()));
+			} catch (SQLException $exc) {
+			}
 		}
+		$id = $resultSet.getInt("id");
 	}
 
 	ActiveRecordHandler(final DatabaseAccess $dbAccess, final Interface $interface) {
@@ -45,8 +52,11 @@ public class ActiveRecordHandler implements InvocationHandler {
 	}
 	
 	@Override
-	public Object invoke(final Object $proxy, final Method $method, final Object[] $args) throws Throwable {
+	public Object invoke(final Object $proxy, final Method $method, Object[] $args) throws Throwable {
 
+		if ($args == null) {
+			$args = new Object[] {};
+		}
 		String $methodName = $method.getName().intern();
 		
 		if ($methodName == "getId") {
@@ -74,9 +84,9 @@ public class ActiveRecordHandler implements InvocationHandler {
 			}
 			
 		} else if ($methodName.startsWith("get")) {
-			
 			String $propertyName = $methodName.substring(3);
 			Property $property = $interface.getProperty($propertyName);
+			$propertyName = DatabaseSQL.makeSQLName($propertyName);
 			
 			if ($property.isManyPart()) {
 				if ($resolvedRecords.containsKey($propertyName)) {
@@ -107,9 +117,10 @@ public class ActiveRecordHandler implements InvocationHandler {
 		} else if ($methodName.startsWith("set")) {
 			String $propertyName = $methodName.substring(3);
 			Property $property = $interface.getProperty($propertyName);
+			$propertyName = DatabaseSQL.makeSQLName($propertyName);
 			if ($args[0] instanceof ActiveRecord) {
-				$args[0] = ((ActiveRecord<?>)$args[0]).getId();
 				$resolvedRecords.put($propertyName, (ActiveRecord<?>) $args[0]);
+				$args[0] = ((ActiveRecord<?>)$args[0]).getId();
 			}
 			$newValues.put($property.getSqlName(), $args[0]);
 			if ($propertyChangeSupport != null) {
@@ -126,12 +137,11 @@ public class ActiveRecordHandler implements InvocationHandler {
 			
 		} else if ($methodName == "delete") {
 			Connection $c = $dbAccess.getConnection();
-			String $query = $dbAccess.getDatabaseExtravaganza().getDeleteQuery($interface, $id);
 			try {
-				$c.createStatement().executeUpdate($query);
+				$dbAccess.getDatabaseExtravaganza().doDelete($c, $interface.getSqlName(), $id);
 				$id = null;
 			} catch (SQLException $exc) {
-				throw $exc;
+				throw new DatabaseException($exc);
 			} finally {
 				$dbAccess.release($c);
 			}
@@ -146,23 +156,52 @@ public class ActiveRecordHandler implements InvocationHandler {
 				}
 				$newValues.put("last_modified", $now);
 			}
-			
-			if ($args == null || $args.length < 1) {
-				if ($id == null) {
-					// insert
-				} else {
-					// update
-				}
-			} else if ($args.length == 1) {
-				if ($id == null) {
-					// insert
-				} else {
-					// update
-				}
-				$oldValues = $newValues;
-				$newValues = new HashMap<String,Object>();
+			Connection $c = $dbAccess.getConnection();
+			int $depth = 0;
+			if ($args.length == 1) {
+				$depth = (Integer) $args[0];
 			}
+			if ($depth > 0) {
+				// BEGIN TRANSACTION
+				for (Entry<String,ActiveRecord<?>> $e : $resolvedRecords.entrySet()) {
+					ActiveRecord<?> $o = $e.getValue();
+					if (($o != null) && $o.hasChanges()) {
+						$o.saveChanges($depth - 1);
+						$newValues.put($e.getKey(), $o.getId());
+					}
+				}
+			}
+			String[] $properties = $newValues.keySet().toArray(new String[$newValues.keySet().size()]);
+			Object[] $values = new Object[$properties.length];
+			int $i = 0;
+			for (String $p : $properties) {
+				$values[$i] = $newValues.get($p);
+				$i++;
+			}
+			try {
+				if ($id == null) {
+					$id = $dbAccess.getDatabaseExtravaganza().doInsert($c, $interface.getSqlName(), $properties, $values);
+				} else {
+					if (!$newValues.isEmpty()) {
+						$dbAccess.getDatabaseExtravaganza().doUpdate($c, $interface.getSqlName(), $properties, $values, $id);
+					}
+				}
+			} catch (SQLException $exc) {
+				throw new DatabaseException($exc);
+			} finally {
+				$dbAccess.release($c);
+			}
+			for (Entry<String,Object> $e : $oldValues.entrySet()) {
+				if (!$newValues.containsKey($e.getKey())) {
+					$newValues.put($e.getKey(), $e.getValue());
+				}
+			}
+			$oldValues = $newValues;
+			$newValues = new HashMap<String,Object>();
 			
+			if ($args.length == 1) {
+				// COMMIT TRANSACTION
+			}
 		} else if ($methodName == "toString") {
 			return $interface.getName() + '#' + $id;
 			
@@ -193,71 +232,5 @@ public class ActiveRecordHandler implements InvocationHandler {
 			return new PropertyChangeListener[0];
 		}
 		return $proxy;
-		
-		/*
-
-		if ($methodName == "saveChanges") {
-			if ($proxy instanceof Entity) {
-				Date $now = new Date(System.currentTimeMillis());
-				if ($id == null) {
-					$newValues.put("created", $now);
-				} else {
-					$newValues.remove("created");
-				}
-				$newValues.put("last_modified", $now);
-			}
-			
-			String[] $properties = $newValues.keySet().toArray(new String[$newValues.keySet().size()]);
-			for (int $i = 0; $i < $properties.length; $i++) {
-				$properties[$i] = "`" + $properties[$i] + "`";
-			}
-			if ($id == null) {
-				// INSERT
-				Connection $c = $dbAccess.getConnection();
-				try {
-					String $columns = AbusingStrings.implode(",", $properties);
-					for (int $i = 0; $i < $properties.length; $i++) {
-						$properties[$i] = "?";
-					}
-					String $values = AbusingStrings.implode(",", $properties);
-					String $query = "INSERT INTO `" + $interface.getSqlName() + "` ("
-							+ $columns + ") VALUES (" + $values + ")";
-					PreparedStatement $stmt = $c.prepareStatement($query, Statement.RETURN_GENERATED_KEYS);
-					// prepare($stmt, $newValues);
-					$stmt.executeUpdate();
-					ResultSet $key = $stmt.getGeneratedKeys();
-					$key.next();
-					$id = $key.getInt(1);
-				} catch (SQLException $exc) {
-					throw $exc;
-				} finally {
-					$dbAccess.release($c);
-				}
-			} else {
-				// UPDATE
-				Connection $c = $dbAccess.getConnection();
-				try {
-					for (int $i = 0; $i < $properties.length; $i++) {
-						$properties[$i] += " = ?";
-					}
-					String $query = "UPDATE `" + $interface.getSqlName() + "` SET "
-							+ AbusingStrings.implode(",", $properties) + " WHERE `id` = ?";
-					PreparedStatement $stmt = $c.prepareStatement($query);
-					// prepare($stmt, $newValues);
-					$stmt.setInt($properties.length + 1, $id);
-					$stmt.executeUpdate();
-				} catch (SQLException $exc) {
-					throw $exc;
-				} finally {
-					$dbAccess.release($c);
-				}
-			}
-			$oldValues = $newValues;
-			$newValues = new HashMap<String,Object>();
-		}
-		return $proxy;
-		
-		*/
 	}
-
 }

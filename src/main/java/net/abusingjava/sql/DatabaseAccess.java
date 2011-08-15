@@ -110,4 +110,9 @@ public interface DatabaseAccess {
 	 * 
 	 */
 	DatabaseExtravaganza getDatabaseExtravaganza();
+	
+	/**
+	 * 
+	 */
+	void close();
 }

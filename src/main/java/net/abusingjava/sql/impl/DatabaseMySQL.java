@@ -1,17 +1,17 @@
 package net.abusingjava.sql.impl;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import static net.abusingjava.functions.AbusingFunctions.*;
+import static net.abusingjava.strings.AbusingStrings.*;
+
+import java.sql.*;
 import java.util.Date;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.*;
-import net.abusingjava.strings.AbusingStrings;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 
 	@Override
@@ -80,11 +80,11 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 						for (int $j = 0; $j < $propertyNames.length; $j++) {
 							$propertyNames[$j] = escapeName($properties[$j].getSqlName());
 						}
-						$b.append(AbusingStrings.implode(", ", $propertyNames));
+						$b.append(implode(", ", $propertyNames));
 						$b.append("),\n\t");
 					}
 					$b.append("PRIMARY KEY (`id`)\n) ENGINE=InnoDB;\n");
-	
+					
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);
 				}
@@ -114,7 +114,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 					$b.append("`)");
 					
 					$b.append("\n) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
-	
+
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);
 				}
@@ -175,7 +175,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			for (int $i = 0; $i < $enums.length; $i++) {
 			        $enumNames[$i] = $enums[$i].name();
 			}
-			$builder.append(AbusingStrings.implode("', '", $enumNames));
+			$builder.append(implode("', '", $enumNames));
 			$builder.append("')");
 		} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
 			$builder.append("INTEGER");
@@ -225,8 +225,65 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	}
 
 	@Override
-	public String getDeleteQuery(final Interface $interface, final int $id) {
-		return "DELETE FROM `" + $interface.getSqlName() + "` WHERE `id` = $id";
+	public void doDelete(final Connection $c, final String $table, final int $id) throws SQLException {
+		$c.createStatement().executeUpdate("DELETE FROM `" + $table + "` WHERE `id` = " + $id);
 	}
 
+	@Override
+	public int doInsert(final Connection $c, final String $table, final String[] $properties, final Object[] $values) throws SQLException {
+		PreparedStatement $stmt = $c.prepareStatement("INSERT INTO `" + $table + "` (`"
+				+ implode("`, `", $properties) + "`) VALUES ("
+				+ repeat("?, ", $properties.length - 1) + "?)"
+				, Statement.RETURN_GENERATED_KEYS);
+		prepare($stmt, $values);
+		$stmt.executeUpdate();
+		ResultSet $keys = $stmt.getGeneratedKeys();
+		$keys.next();
+		return $keys.getInt(1);
+	}
+
+	@Override
+	public void doUpdate(final Connection $c, final String $table, final String[] $properties, final Object[] $values, final int $id) throws SQLException {
+		PreparedStatement $stmt = $c.prepareStatement("UPDATE `" + $table + "` SET `"
+				+ implode("` = ?, `", $properties) + "` = ? WHERE `id` = " + $id);
+		prepare($stmt, $values);
+		$stmt.executeUpdate();
+	}
+
+	@Override
+	public Object get(final ResultSet $resultSet, final String $column, final Class<?> $javaType) throws SQLException {
+		Object $value = null;
+		
+		if (($javaType == int.class) || ($javaType == Integer.class)) {
+			$value = $resultSet.getInt($column);
+		} else if (($javaType == boolean.class) || ($javaType == Boolean.class)) {
+			$value = $resultSet.getBoolean($column);
+		} else if ($javaType == String.class) {
+			$value = $resultSet.getString($column);
+		} else if ($javaType == byte[].class) {
+			$value = $resultSet.getBytes($column);
+		} else if (($javaType == float.class) || ($javaType == Float.class)) {
+			$value = $resultSet.getFloat($column);
+		} else if (($javaType == double.class) || ($javaType == Double.class)) {
+			$value = $resultSet.getDouble($column);
+		} else if ($javaType.isEnum()) {
+			$value = $resultSet.getString($column);
+			if (!$resultSet.wasNull()) {
+				return callback(Enum.class, "valueOf").call((String) $value);
+			}
+		} else if (($javaType == short.class) || ($javaType == Short.class)) {
+			$value = $resultSet.getShort($column);
+		} else if (($javaType == byte.class) || ($javaType == Byte.class)) {
+			$value = $resultSet.getByte($column);
+		} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
+			$value = $resultSet.getInt($column);
+		}
+		if ($resultSet.wasNull()) {
+			$value = null;
+		}
+	
+		return $value;
+	}
+
+	
 }
