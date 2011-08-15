@@ -11,7 +11,7 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.*;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> implements RecordSet<T> {
 
 	private static final long serialVersionUID = -1889746615690043280L;

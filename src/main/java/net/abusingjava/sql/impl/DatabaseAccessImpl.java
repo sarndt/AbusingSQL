@@ -11,7 +11,7 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.*;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 public class DatabaseAccessImpl implements DatabaseAccess {
 
 	final ConnectionPool $pool;
@@ -66,14 +66,13 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final String $query, final Object... $values) {
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final String $query, final Object... $values) {
 		try {
 			Connection $c = $pool.getConnection();
 			try {
 				PreparedStatement $stmt = $c.prepareStatement($query);
 				for (int $i = 0; $i < $values.length; $i++) {
-					// TODO FIXME FIXME FIXME FIXME FIXME
-					// ActiveRecordHandler.setValue($stmt, $i+1, $values[$i]);
+					$extravaganza.set($stmt, $i, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
 				return new RecordSetImpl<T>(this, $result, $schema.getInterface($class));
@@ -89,7 +88,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
 	@Override
 	public <T extends ActiveRecord<?>> T selectOne(final Class<T> $class, final String $query, final Object... $values) {
-		RecordSetImpl<T> $result = select($class, $query, $values);
+		RecordSet<T> $result = select($class, $query, $values);
 		if ($result.size() > 0) {
 			return $result.get(0);
 		}
@@ -97,31 +96,31 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 	
 	@Override
-	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
-		String $sqlQuery = "SELECT * FROM `" + $sqlName + "`";
+		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, null, null);
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final int $limit, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
-		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` LIMIT " + $limit;
+		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, null, $limit);
 		return select($class, $sqlQuery);
 	}
 
 	@Override
-	public <T extends ActiveRecord<?>> RecordSetImpl<T> select(final Class<T> $class, final int $offset, final int $limit, final Class<?>... $joinClasses) {
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final int $offset, final int $limit, final Class<?>... $joinClasses) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
-		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` LIMIT " + $limit + " OFFSET " + $offset;
+		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, $offset, $limit);
 		return select($class, $sqlQuery);
 	}
 
 	@Override
 	public <T extends ActiveRecord<?>> T selectById(final Class<T> $class, final int $id) {
 		String $sqlName = DatabaseSQL.makeSQLName($class.getSimpleName());
-		String $sqlQuery = "SELECT * FROM `" + $sqlName + "` WHERE `id` = " + $id;
-		RecordSetImpl<T> $result = select($class, $sqlQuery);
+		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, $id);
+		RecordSet<T> $result = select($class, $sqlQuery);
 		if ($result.size() == 1) {
 			return $result.getFirst();
 		}
@@ -129,9 +128,24 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public RecordSetImpl<ActiveRecord<?>> query(final String $query, final Object... $values) {
-		// TODO Auto-generated method stub
-		return null;
+	public RecordSet<ActiveRecord<?>> query(final String $query, final Object... $values) {
+		try {
+			Connection $c = $pool.getConnection();
+			try {
+				PreparedStatement $stmt = $c.prepareStatement($query);
+				for (int $i = 0; $i < $values.length; $i++) {
+					$extravaganza.set($stmt, $i, $values[$i]);
+				}
+				ResultSet $result = $stmt.executeQuery();
+				return new ObjectRecordSet(this, $result);
+			} catch (SQLException $exc) {
+				throw $exc;
+			} finally {
+				$pool.release($c);
+			}
+		} catch (SQLException $exc) {
+			throw new DatabaseException($exc);
+		}
 	}
 
 	@Override

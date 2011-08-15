@@ -1,9 +1,7 @@
 package net.abusingjava.sql.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Date;
 
 import net.abusingjava.Author;
@@ -12,7 +10,7 @@ import net.abusingjava.sql.DatabaseException;
 import net.abusingjava.sql.DatabaseExtravaganza;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 	
 	@Override
@@ -54,4 +52,16 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 			set($stmt, ++$i, $o);
 		}
 	}
+
+	@Override
+	public String makeSelectQuery(final String $table, final Integer $offset, final Integer $limit) {
+		return "SELECT * FROM " + escapeName($table) + ($limit == null ? "" : " LIMIT " + $limit + ($offset == null ? "" : " OFFSET " + $limit));
+	}
+
+	@Override
+	public String makeSelectQuery(final String $table, final int $id) {
+		return "SELECT * FROM " + escapeName($table) + "WHERE " + escapeName("id") + " = " + $id;
+	}
+	
+	
 }

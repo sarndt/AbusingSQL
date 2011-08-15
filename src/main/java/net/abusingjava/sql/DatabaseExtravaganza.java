@@ -9,7 +9,7 @@ import net.abusingjava.Author;
 import net.abusingjava.Version;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 public interface DatabaseExtravaganza {
 
 	/**
@@ -67,6 +67,16 @@ public interface DatabaseExtravaganza {
 	 */
 	void doUpdate(Connection $c, String $table, String[] $properties, Object[] $values, int $id) throws SQLException;
 
+	/**
+	 * 
+	 */
+	String makeSelectQuery(String $table, Integer $offset, Integer $limit);
+	
+	/**
+	 * 
+	 */
+	String makeSelectQuery(String $table, int $id);
+	
 	/**
 	 * 
 	 */
