@@ -30,7 +30,7 @@ public interface ActiveRecord<T> extends SupportsPropertyChangeEvents {
 	T saveChanges(Connection $c);
 	
 	/**
-	 * Speichert Änderungen und speichert auch Objekte die zu diesem in Beziehung stehen.
+	 * 
 	 */
 	T saveChanges(int $depth);
 	
@@ -74,4 +74,8 @@ public interface ActiveRecord<T> extends SupportsPropertyChangeEvents {
 	 */
 	T set(String $column, Object $value);
 	
+	/**
+	 * 
+	 */
+	T clearCache();
 }

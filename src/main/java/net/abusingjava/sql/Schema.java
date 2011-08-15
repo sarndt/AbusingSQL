@@ -39,6 +39,10 @@ public class Schema {
 					}
 				}
 			}
+			for (ManyToMany $m : $manyToMany) {
+				$m.getFromProperty().$manyToMany.add($m);
+				$m.getToProperty().$manyToMany.add($m);
+			}
 		}
 	}
 	

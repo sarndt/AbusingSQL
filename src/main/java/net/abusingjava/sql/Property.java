@@ -2,6 +2,7 @@ package net.abusingjava.sql;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.abusingjava.*;
@@ -10,7 +11,7 @@ import net.abusingjava.reflection.AbusingReflection;
 import net.abusingjava.sql.impl.DatabaseSQL;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 public class Property {
 
 	final String $name;
@@ -24,6 +25,8 @@ public class Property {
 	final Long $min;
 	final Long $max;
 	final Object $default;
+	final Set<ManyToMany> $manyToMany = new HashSet<ManyToMany>();
+	Property $onePart = null;
 	
 	
 	Property(final Interface $parent, final Class<?> $class, final String $name) {
@@ -118,6 +121,21 @@ public class Property {
 	
 	public boolean isManyPart() {
 		return $isManyPart;
+	}
+	
+	public Property getOnePart() {
+		if ($onePart == null) {
+			for (Property $p : $parent.$parent.getInterface($genericType).getProperties()) {
+				if (ActiveRecord.class.isAssignableFrom($p.getJavaType())) {
+					$onePart = $p;
+				}
+			}
+		}
+		return $onePart;
+	}
+	
+	public boolean isManyToManyPart() {
+		return !$manyToMany.isEmpty();
 	}
 	
 	public boolean isUnique() {

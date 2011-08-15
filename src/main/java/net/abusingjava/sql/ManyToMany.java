@@ -4,22 +4,25 @@ import net.abusingjava.Author;
 import net.abusingjava.Version;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-15")
 public class ManyToMany {
 
 	final String $from;
-	final String $fromProperty;
+	final String $fromPropertyName;
+	Property $fromProperty = null;
 	final String $to;
-	final String $toProperty;
+	final String $toPropertyName;
+	Property $toProperty = null;
+	
 	final Schema $parent;
 	
 	ManyToMany(final Schema $parent, final String $from, final String $fromProperty,
 			final String $to, final String $toProperty) {
 		this.$parent = $parent;
 		this.$from = $from;
-		this.$fromProperty = $fromProperty;
+		this.$fromPropertyName = $fromProperty;
 		this.$to = $to;
-		this.$toProperty = $toProperty;
+		this.$toPropertyName = $toProperty;
 	}
 	
 	public Schema getSchema() {
@@ -35,20 +38,26 @@ public class ManyToMany {
 	}
 	
 	public Property getFromProperty() {
-		return $parent.getInterface($from).getProperty($fromProperty);
+		if ($fromProperty == null) {
+			$fromProperty = $parent.getInterface($from).getProperty($fromPropertyName);
+		}
+		return $fromProperty; 
 	}
 	
 	public Property getToProperty() {
-		return $parent.getInterface($to).getProperty($toProperty);
+		if ($toProperty == null) {
+			$toProperty = $parent.getInterface($to).getProperty($toPropertyName); 
+		}
+		return $toProperty;
 	}
 	
 	@Override
 	public boolean equals(final Object $o) {
 		if ($o instanceof ManyToMany) {
 			return ($from.equals(((ManyToMany) $o).$from) && $to.equals(((ManyToMany) $o).$to)
-					&& $fromProperty.equals(((ManyToMany) $o).$fromProperty) && $toProperty.equals(((ManyToMany) $o).$toProperty))
+					&& $fromPropertyName.equals(((ManyToMany) $o).$fromPropertyName) && $toPropertyName.equals(((ManyToMany) $o).$toPropertyName))
 					|| ($from.equals(((ManyToMany) $o).$to) && $to.equals(((ManyToMany) $o).$from)
-					&& $fromProperty.equals(((ManyToMany) $o).$toProperty) && $toProperty.equals(((ManyToMany) $o).$fromProperty));
+					&& $fromPropertyName.equals(((ManyToMany) $o).$toPropertyName) && $toPropertyName.equals(((ManyToMany) $o).$fromPropertyName));
 		}
 		return false;
 	}
@@ -60,6 +69,6 @@ public class ManyToMany {
 	
 	@Override
 	public String toString() {
-		return $from + '#' + $fromProperty + " -> " + $to + '#' + $toProperty;
+		return $from + '#' + $fromPropertyName + " -> " + $to + '#' + $toPropertyName;
 	}
 }

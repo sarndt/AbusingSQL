@@ -4,12 +4,11 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import net.abusingjava.Author;
@@ -29,6 +28,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 	Map<String, Object> $oldValues = new HashMap<String, Object>();
 	Map<String, Object> $newValues = new HashMap<String, Object>();
 	Map<String, ActiveRecord<?>> $resolvedRecords = new HashMap<String, ActiveRecord<?>>();
+	Map<String, Set<ActiveRecord<?>>> $resolvedSets = new HashMap<String, Set<ActiveRecord<?>>>();
 	
 	Integer $id = null;
 
@@ -106,7 +106,27 @@ public class ActiveRecordHandler implements InvocationHandler {
 				return $record;
 				
 			} else if ($property.getGenericType() != null) {
-				
+				if ($property.isManyToManyPart()) {
+					throw new UnsupportedOperationException("ManyToMany-Relationships are currently not resolved.");
+				}
+				if (!$resolvedSets.containsKey($property.getSqlName())) {
+					@SuppressWarnings("unchecked")
+					Class<ActiveRecord<?>> $recordType = (Class<ActiveRecord<?>>) $property.getGenericType();
+					String $onePart = $property.getOnePart().getSqlName();
+					Set<ActiveRecord<?>> $records = $dbAccess.select($recordType,
+							"SELECT * FROM " + $dbAccess.getDatabaseExtravaganza().escapeName(
+									$dbAccess.getSchema().getInterface($recordType).getSqlName()
+									) + " WHERE " + $dbAccess.getDatabaseExtravaganza().escapeName(
+											$onePart) + " = " + $id);
+					$resolvedSets.put($property.getSqlName(), $records);
+					for (ActiveRecord<?> $record : $records) {
+						ActiveRecordHandler $handler = (ActiveRecordHandler) Proxy.getInvocationHandler($record);
+						$handler.$resolvedRecords.put($onePart, (ActiveRecord<?>) $proxy);
+					}
+					return $records;
+				}
+				return $resolvedSets.get($property.getSqlName());
+				// throw new UnsupportedOperationException("We’re working on this: " + $property.getOnePart());
 			}
 			if ($newValues.containsKey($propertyName)) {
 				return $newValues.get($propertyName);
@@ -121,6 +141,11 @@ public class ActiveRecordHandler implements InvocationHandler {
 			if ($args[0] instanceof ActiveRecord) {
 				$resolvedRecords.put($propertyName, (ActiveRecord<?>) $args[0]);
 				$args[0] = ((ActiveRecord<?>)$args[0]).getId();
+			} else if ($property.getGenericType() != null) {
+				if ($property.isManyToManyPart()) {
+					throw new UnsupportedOperationException("ManyToMany-Relationships are currently not saved :-(");
+				}
+				throw new UnsupportedOperationException("We’re working on this.");
 			}
 			$newValues.put($property.getSqlName(), $args[0]);
 			if ($propertyChangeSupport != null) {
@@ -130,10 +155,25 @@ public class ActiveRecordHandler implements InvocationHandler {
 			}
 			
 		} else if ($methodName == "equals") {
-			// TODO: equals
+			if (Proxy.isProxyClass($args[0].getClass())) {
+				InvocationHandler $h = Proxy.getInvocationHandler($args[0]);
+				if ($h instanceof ActiveRecordHandler) {
+					ActiveRecordHandler $r = (ActiveRecordHandler) $h;
+					if (!$interface.equals($r.$interface)) {
+						return false;
+					}
+					if (($r.$id != null) || ($id != null)) {
+						return $r.$id == $id;
+					}
+					return $r.$newValues.entrySet().equals($newValues.entrySet());
+				}
+			}
 			
 		} else if ($methodName == "hashCode") {
-			// TODO: hashCode
+			if ($id != null) {
+				return $id;
+			}
+			return -Math.abs($newValues.hashCode());
 			
 		} else if ($methodName == "delete") {
 			Connection $c = null;
@@ -233,6 +273,10 @@ public class ActiveRecordHandler implements InvocationHandler {
 			
 		} else if ($methodName == "hasChanges") {
 			return !$newValues.isEmpty();
+			
+		} else if ($methodName == "clearCache") {
+			$resolvedRecords.clear();
+			$resolvedSets.clear();
 			
 		} else if ($methodName == "discardChanges") {
 			$newValues.clear();
