@@ -100,6 +100,20 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 					$b.append("`, `f_");
 					$b.append($m.getTo().getSqlName());
 					$b.append("`)");
+					$b.append(",\n\t");
+					
+					$b.append("FOREIGN KEY (`f_");
+					$b.append($m.getFrom().getSqlName());
+					$b.append("`) REFERENCES `");
+					$b.append($m.getFrom().getSqlName());
+					$b.append("` (`id`)");
+					$b.append(",\n\t");
+
+					$b.append("FOREIGN KEY (`f_");
+					$b.append($m.getTo().getSqlName());
+					$b.append("`) REFERENCES `");
+					$b.append($m.getTo().getSqlName());
+					$b.append("` (`id`)");
 					
 					$b.append("\n) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
 
