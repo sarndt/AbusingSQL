@@ -7,7 +7,7 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.*;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-08-16")
 public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFactory {
 	
 	int $reaperDelay = 25000;
