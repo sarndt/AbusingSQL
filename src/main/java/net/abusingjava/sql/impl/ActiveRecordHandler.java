@@ -23,15 +23,15 @@ import net.abusingjava.sql.*;
 @Version("2011-08-15")
 public class ActiveRecordHandler implements InvocationHandler {
 
-	final DatabaseAccess $dbAccess;
-	final Interface $interface;
-	PropertyChangeSupport $propertyChangeSupport = null;
-	Map<String, Object> $oldValues = new HashMap<String, Object>();
-	Map<String, Object> $newValues = new HashMap<String, Object>();
-	Map<String, ActiveRecord<?>> $resolvedRecords = new HashMap<String, ActiveRecord<?>>();
-	Map<String, Set<ActiveRecord<?>>> $resolvedSets = new HashMap<String, Set<ActiveRecord<?>>>();
+	private final DatabaseAccess $dbAccess;
+	private final Interface $interface;
+	private PropertyChangeSupport $propertyChangeSupport = null;
+	private Map<String, Object> $oldValues = new HashMap<String, Object>();
+	private Map<String, Object> $newValues = new HashMap<String, Object>();
+	private final Map<String, ActiveRecord<?>> $resolvedRecords = new HashMap<String, ActiveRecord<?>>();
+	private final Map<String, Set<ActiveRecord<?>>> $resolvedSets = new HashMap<String, Set<ActiveRecord<?>>>();
 	
-	Integer $id = null;
+	private Integer $id = null;
 
 	ActiveRecordHandler(final DatabaseAccess $dbAccess, final ResultSet $resultSet) throws SQLException {
 		this.$dbAccess = $dbAccess;

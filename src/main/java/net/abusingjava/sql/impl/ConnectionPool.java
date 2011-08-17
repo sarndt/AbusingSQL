@@ -7,14 +7,15 @@ import java.util.ArrayList;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.ConnectionPool;
+import net.abusingjava.sql.ConnectionProvider;
+import net.abusingjava.sql.DatabaseException;
 
 /**
  * A simple ConnectionPool that caches a certain amount of connections always.
  */
 @Author("Julian Fleischer")
-@Version("2011-08-13")
-public class SimpleConnectionPool implements ConnectionPool {
+@Version("2011-08-15")
+public class ConnectionPool implements ConnectionProvider {
 
 	final private ArrayList<ConnectionObject> $connections;
 	final private int $poolsize;
@@ -93,7 +94,7 @@ public class SimpleConnectionPool implements ConnectionPool {
 	 * @throws ClassNotFoundException Wenn die durch $driverClassName angegebene Klasse nicht gefunden wurde. 
 	 * @throws SQLException Wenn es Fehler beim Erstellen der Verbindungen gab.
 	 */
-	public SimpleConnectionPool(final String $driverClassName, final String $url, final String $user, final String $password, final int $poolsize, final int $reaperDelay, final int $reaperTimeout, final int $connectionTimeout)
+	public ConnectionPool(final String $driverClassName, final String $url, final String $user, final String $password, final int $poolsize, final int $reaperDelay, final int $reaperTimeout, final int $connectionTimeout)
 			throws ClassNotFoundException, SQLException {
 		this.$url = $url;
 		this.$user = $user;
@@ -154,6 +155,17 @@ public class SimpleConnectionPool implements ConnectionPool {
 	public boolean release(final Connection $connection) {
 		if ($connection == null) {
 			return true;
+		}
+		try {
+			if (!$connection.getAutoCommit()) {
+				try {
+					$connection.commit();
+				} catch (SQLException $exc) {
+					throw new DatabaseException($exc);
+				}
+				$connection.setAutoCommit(true);
+			}
+		} catch (SQLException $exc) {
 		}
 		synchronized ($connections) {
 			for (ConnectionObject $o : $connections) {

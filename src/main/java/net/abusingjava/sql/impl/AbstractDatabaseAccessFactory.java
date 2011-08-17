@@ -48,7 +48,7 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	@Override
 	public DatabaseAccess newDatabaseAccess(final String $url, final String $user, final String $password) {
 		try {
-			ConnectionPool $pool = new SimpleConnectionPool($extravaganza.getDriverName(),
+			ConnectionProvider $pool = new ConnectionPool($extravaganza.getDriverName(),
 					$url, $user, $password, $poolsize, $reaperDelay, $reaperTimeout, $connectionTimeout);
 			return new DatabaseAccessImpl($extravaganza, $pool, $schema);
 		} catch (SQLException $exc) {

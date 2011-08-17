@@ -27,6 +27,7 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 					new ActiveRecordHandler($dbAccess, $interface, $result));
 			add($instance);
 		}
+		$result.close();
 	}
 	
 	@Override

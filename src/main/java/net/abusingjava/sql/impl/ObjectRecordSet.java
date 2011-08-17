@@ -28,6 +28,7 @@ public class ObjectRecordSet extends LinkedList<ActiveRecord<?>> implements Reco
 					new ActiveRecordHandler($dbAccess, $result));
 			add($instance);
 		}
+		$result.close();
 	}
 
 	@Override

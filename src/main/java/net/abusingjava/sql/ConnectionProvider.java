@@ -3,7 +3,7 @@ package net.abusingjava.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public interface ConnectionPool {
+public interface ConnectionProvider {
 
 	/**
 	 * Gibt eine Verbindung aus dem ConnectionPool zurück beziehungsweise erstellt eine (wenn alle Verbindungen bereits vergeben sind).

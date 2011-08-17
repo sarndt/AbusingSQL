@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import net.abusingjava.Author;
 import net.abusingjava.Experimental;
 import net.abusingjava.Version;
-import net.abusingjava.sql.ConnectionPool;
+import net.abusingjava.sql.ConnectionProvider;
 import net.abusingjava.sql.Property;
 import net.abusingjava.sql.Schema;
 
@@ -27,12 +27,12 @@ public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 	}
 
 	@Override
-	public void createDatabase(final ConnectionPool $pool, final Schema $schema) {
+	public void createDatabase(final ConnectionProvider $pool, final Schema $schema) {
 		
 	}
 	
 	@Override
-	public void dropDatabase(final ConnectionPool $pool, final Schema $schema) {
+	public void dropDatabase(final ConnectionProvider $pool, final Schema $schema) {
 		
 	}
 

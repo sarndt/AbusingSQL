@@ -14,13 +14,13 @@ import net.abusingjava.sql.*;
 @Version("2011-08-15")
 public class DatabaseAccessImpl implements DatabaseAccess {
 
-	final ConnectionPool $pool;
+	final ConnectionProvider $pool;
 	final Schema $schema;
 	final DatabaseExtravaganza $extravaganza;
 	
 	Connection $connection = null;
 	
-	DatabaseAccessImpl(final DatabaseExtravaganza $extravaganza, final ConnectionPool $pool, final Schema $schema) {
+	DatabaseAccessImpl(final DatabaseExtravaganza $extravaganza, final ConnectionProvider $pool, final Schema $schema) {
 		this.$extravaganza = $extravaganza;
 		this.$pool = $pool;
 		this.$schema = $schema;
@@ -70,12 +70,14 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		try {
 			Connection $c = $pool.getConnection();
 			try {
-				PreparedStatement $stmt = $c.prepareStatement($query);
+				PreparedStatement $stmt = $c.prepareStatement($query, ResultSet.TYPE_FORWARD_ONLY);
 				for (int $i = 0; $i < $values.length; $i++) {
 					$extravaganza.set($stmt, $i + 1, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
-				return new RecordSetImpl<T>(this, $result, $schema.getInterface($class));
+				RecordSet<T> $recordSet = new RecordSetImpl<T>(this, $result, $schema.getInterface($class));
+				$stmt.close();
+				return $recordSet;
 			} catch (SQLException $exc) {
 				throw $exc;
 			} finally {
@@ -132,12 +134,14 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		try {
 			Connection $c = $pool.getConnection();
 			try {
-				PreparedStatement $stmt = $c.prepareStatement($query);
+				PreparedStatement $stmt = $c.prepareStatement($query, ResultSet.TYPE_FORWARD_ONLY);
 				for (int $i = 0; $i < $values.length; $i++) {
 					$extravaganza.set($stmt, $i, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
-				return new ObjectRecordSet(this, $result);
+				ObjectRecordSet $recordSet = new ObjectRecordSet(this, $result);
+				$stmt.close();
+				return $recordSet;
 			} catch (SQLException $exc) {
 				throw $exc;
 			} finally {
@@ -153,12 +157,13 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		try {
 			Connection $c = $pool.getConnection();
 			try {
-				PreparedStatement $stmt = $c.prepareStatement($query);
+				PreparedStatement $stmt = $c.prepareStatement($query, ResultSet.TYPE_FORWARD_ONLY);
 				for (int $i = 0; $i < $values.length; $i++) {
 					$extravaganza.set($stmt, $i, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
 				ObjectRecordSet $records = new ObjectRecordSet(this, $result);
+				$stmt.close();
 				if ($records.isEmpty()) {
 					return null;
 				}

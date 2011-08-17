@@ -8,11 +8,11 @@ import java.sql.SQLException;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.ConnectionPool;
+import net.abusingjava.sql.ConnectionProvider;
 
 @Author("Julian Fleischer")
 @Version("2011-08-15")
-public class ConnectionProviderWithQueryCache implements ConnectionPool {
+public class ConnectionProviderWithQueryCache implements ConnectionProvider {
 
 	static class ConnectionHandler implements InvocationHandler {
 

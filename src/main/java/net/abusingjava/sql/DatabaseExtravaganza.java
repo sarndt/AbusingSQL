@@ -35,12 +35,12 @@ public interface DatabaseExtravaganza {
 	/**
 	 * Creates a database using the given $pool and $schema.
 	 */
-	void createDatabase(ConnectionPool $pool, Schema $schema);
+	void createDatabase(ConnectionProvider $pool, Schema $schema);
 
 	/**
 	 * Drops an existing database using the given $pool and $schema.
 	 */
-	void dropDatabase(ConnectionPool $pool, Schema $schema);
+	void dropDatabase(ConnectionProvider $pool, Schema $schema);
 
 	/**
 	 * 

@@ -25,7 +25,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	}
 
 	@Override
-	public void createDatabase(final ConnectionPool $pool, final Schema $schema) {
+	public void createDatabase(final ConnectionProvider $pool, final Schema $schema) {
 		try {
 			Connection $c = $pool.getConnection();
 			
@@ -187,7 +187,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	}
 
 	@Override
-	public void dropDatabase(final ConnectionPool $pool, final Schema $schema) {
+	public void dropDatabase(final ConnectionProvider $pool, final Schema $schema) {
 		try {
 			Connection $c = $pool.getConnection();
 			
@@ -211,7 +211,9 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 					$b.append(escapeName($i.getSqlName()));
 					$b.append(" CASCADE");
 					
-					$c.createStatement().execute($b.toString());
+					Statement $stmt = $c.createStatement();
+					$stmt.execute($b.toString());
+					$stmt.close();
 					$b.setLength(0);
 				}
 				$c.createStatement().execute("SET FOREIGN_KEY_CHECKS = 1");
@@ -228,7 +230,9 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 
 	@Override
 	public void doDelete(final Connection $c, final String $table, final int $id) throws SQLException {
-		$c.createStatement().executeUpdate("DELETE FROM `" + $table + "` WHERE `id` = " + $id);
+		Statement $stmt = $c.createStatement();
+		$stmt.executeUpdate("DELETE FROM `" + $table + "` WHERE `id` = " + $id);
+		$stmt.close();
 	}
 
 	@Override
@@ -241,7 +245,10 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 		$stmt.executeUpdate();
 		ResultSet $keys = $stmt.getGeneratedKeys();
 		$keys.next();
-		return $keys.getInt(1);
+		int $id = $keys.getInt(1);
+		$keys.close();
+		$stmt.close();
+		return $id;
 	}
 
 	@Override
@@ -250,6 +257,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 				+ implode("` = ?, `", $properties) + "` = ? WHERE `id` = " + $id);
 		prepare($stmt, $values);
 		$stmt.executeUpdate();
+		$stmt.close();
 	}
 
 	@Override
