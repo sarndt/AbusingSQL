@@ -61,6 +61,11 @@ public interface DatabaseAccess {
 	 * 
 	 */
 	<T extends ActiveRecord<?>> T create(final Class<T> $class);
+	
+	/**
+	 * 
+	 */
+	<T extends ActiveRecord<?>> T create(final Class<T> $class, int $id);
 
 	/**
 	 * Drops all Tables belonging to this Schema from the current Database.

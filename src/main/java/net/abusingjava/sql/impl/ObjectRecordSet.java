@@ -12,7 +12,7 @@ import net.abusingjava.sql.DatabaseAccess;
 import net.abusingjava.sql.RecordSet;
 
 @Author("Julian Fleischer")
-@Version("2011-08-15")
+@Version("2011-08-17")
 public class ObjectRecordSet extends LinkedList<ActiveRecord<?>> implements RecordSet<ActiveRecord<?>> {
 
 	private static final long serialVersionUID = -2574917189429656406L;

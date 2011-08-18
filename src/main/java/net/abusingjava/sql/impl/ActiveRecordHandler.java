@@ -20,7 +20,7 @@ import net.abusingjava.sql.*;
  * Implements an ActiveRecord at Runtime.
  */
 @Author("Julian Fleischer")
-@Version("2011-08-15")
+@Version("2011-08-17")
 public class ActiveRecordHandler implements InvocationHandler {
 
 	private final DatabaseAccess $dbAccess;

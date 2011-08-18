@@ -192,4 +192,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	public void close() {
 		$pool.close();
 	}
+
+	@Override
+	public <T extends ActiveRecord<?>> T create(final Class<T> $class, final int $id) {
+		@SuppressWarnings("unchecked")
+		T $instance = (T) Proxy.newProxyInstance($class.getClassLoader(), new Class<?>[] { $class },
+				new ActiveRecordUpdateHandler(this, $schema.getInterface($class)));
+		return $instance;
+	}
 }
