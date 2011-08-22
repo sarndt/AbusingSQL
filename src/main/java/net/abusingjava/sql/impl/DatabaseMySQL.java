@@ -231,7 +231,22 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 		}
 	}
 
-	@Override
+        @Override
+        public void dropAllTablesInDatabase(final ConnectionProvider $pool) {
+            try {
+                
+                Connection $c = $pool.getConnection();   
+                String $dbname= $pool.getSchemaNameFromURL();
+                Statement $stmt = $c.createStatement();
+                $stmt.execute("DROP DATABASE "+$dbname);
+                $stmt.execute("CREATE DATABASE "+$dbname);
+                $stmt.close();
+            } catch (SQLException $exc) {
+                throw new DatabaseException($exc);
+            }
+        }
+
+        @Override
 	public void doDelete(final Connection $c, final String $table, final int $id) throws SQLException {
 		Statement $stmt = $c.createStatement();
 		$stmt.executeUpdate("DELETE FROM `" + $table + "` WHERE `id` = " + $id);

@@ -1,7 +1,9 @@
 package net.abusingjava.sql;
 
+import com.sun.jndi.url.dns.dnsURLContext;
 import java.sql.Connection;
 
+import javax.swing.JList.DropLocation;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 
@@ -16,7 +18,7 @@ public interface DatabaseAccess {
 	 * Retrieves a Connection from the underlying ConnectionPool (or other kind of Connection-Provider, depending on the Implementation).
 	 */
 	Connection getConnection();
-
+        
 	/**
 	 * Gives a Connection back to the underlying ConnectionPool (or other kind of Connection-Provider, e.g. closes the Connection).
 	 */
@@ -69,8 +71,29 @@ public interface DatabaseAccess {
 
 	/**
 	 * Drops all Tables belonging to this Schema from the current Database.
+         * <br><br>
+         * Note: Tables NOT belonging to the current Schema defined by this
+         * DatabaseAccess are completely ignored. This means if the Database
+         * Access used to define the Database had MORE tables than the current
+         * DatabaseAccess used to access the database now, the tables not incl
+         * uded in the current DatabaseAccess will be ignored.
+         * <br><br>
+         * If you wish to drop everything
+         * use {@link #dropAllTablesInDatabase() dropAllTablesInDatabase()}.
 	 */
 	void dropDatabase();
+        
+        /**
+         * Drops the current DB and recreates it without tables afterwards.
+         * This is useful if you need to drop all tables in the DB, regardless
+         * of which Schema was used to generate your DatabaseAccess object.
+         * <br><br>
+         * See also the JavaDoc for the method {@link #dropDatabase() dropDatabase()}.
+         * <br><br>
+         * Note: User must have DROP-Privilege or be the owner of the Database!
+         * 
+         */
+        void dropAllTablesInDatabase();
 	
 	/**
 	 * Creates all Tables belonging to this Schema within the current Database.

@@ -27,6 +27,13 @@ public class ConnectionPool implements ConnectionProvider {
 	final private int $reaperDelay;
 	final private int $reaperTimeout;
 	final private int $connectionTimeout;
+
+        
+        
+        @Override
+        public String getSchemaNameFromURL() {
+            return $url.substring($url.lastIndexOf('/')+1);
+        }
 	
 	
 	class ConnectionReaper implements Runnable {
