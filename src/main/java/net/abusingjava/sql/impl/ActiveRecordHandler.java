@@ -152,6 +152,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			
 		} else if ($methodName.startsWith("set")) {
 			String $propertyName = $methodName.substring(3);
+			String $beanPropertyName = Character.toLowerCase($methodName.charAt(3)) + $methodName.substring(4);
 			Property $property = $interface.getProperty($propertyName);
 			$propertyName = DatabaseSQL.makeSQLName($propertyName);
 			if ($args[0] instanceof ActiveRecord) {
@@ -171,7 +172,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			}
 			$newValues.put($propertyName, $args[0]);
 			if ($propertyChangeSupport != null) {
-				$propertyChangeSupport.firePropertyChange($propertyName, $oldValue, $newValues.get($propertyName));
+				$propertyChangeSupport.firePropertyChange($beanPropertyName, $oldValue, $newValues.get($propertyName));
 			}
 			
 		} else if ($methodName == "equals") {
