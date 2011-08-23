@@ -10,6 +10,12 @@ public interface ConnectionProvider {
 	 * Diese Methode ist thread-safe.
 	 */
 	Connection getConnection() throws SQLException;
+        
+        /**
+         * Tries to identify the Schema that this connection is for by parsing
+         * the URL.
+         */
+        String getSchemaNameFromURL();
 
 	/**
 	 * Gibt einen Verbindung an den ConnectionPool zurück. Diese Methode ist thread-safe.

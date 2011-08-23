@@ -17,7 +17,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	final ConnectionProvider $pool;
 	final Schema $schema;
 	final DatabaseExtravaganza $extravaganza;
-	
+        
 	Connection $connection = null;
 	
 	DatabaseAccessImpl(final DatabaseExtravaganza $extravaganza, final ConnectionProvider $pool, final Schema $schema) {
@@ -25,8 +25,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		this.$pool = $pool;
 		this.$schema = $schema;
 	}
-	
-	Connection connection() throws SQLException {
+
+        Connection connection() throws SQLException {
 		if ($connection == null) {
 			return $pool.getConnection();
 		}
@@ -59,6 +59,11 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	public void dropDatabase() {
 		$extravaganza.dropDatabase($pool, $schema);
 	}
+
+        @Override
+        public void dropAllTablesInDatabase() {
+                $extravaganza.dropAllTablesInDatabase($pool);
+        }
 
 	@Override
 	public void createDatabase() {
@@ -200,4 +205,6 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 				new ActiveRecordUpdateHandler(this, $schema.getInterface($class)));
 		return $instance;
 	}
+
+
 }

@@ -28,6 +28,11 @@ public class ConnectionProviderWithQueryCache implements ConnectionProvider {
 		}
 		
 	}
+        
+        @Override
+        public String getSchemaNameFromURL() {
+            throw new UnsupportedOperationException("Not yet implemented.");
+        }
 	
 	@Override
 	public Connection getConnection() throws SQLException {

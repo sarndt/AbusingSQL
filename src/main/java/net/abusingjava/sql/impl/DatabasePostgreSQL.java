@@ -42,7 +42,16 @@ public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 		
 	}
 
-	@Override
+        @Override
+        public void dropAllTablesInDatabase(ConnectionProvider $pool) {
+            //Warning:
+            //The user trying to use DROP DATABASE on a PostgreSQL-DB may not
+            //be connected with this DB.
+            //see also http://www.postgresql.org/files/documentation/books/pghandbuch/html/sql-dropdatabase.html
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
 	public String getSqlType(final Property $property) {
 		return null;
 	}
@@ -103,4 +112,5 @@ public class DatabasePostgreSQL extends AbstractDatabaseExtravaganza {
 			throw new DatabaseException($exc);
 		}
 	}
+
 }
