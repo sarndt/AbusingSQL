@@ -13,10 +13,11 @@ import net.abusingjava.Version;
 public interface DatabaseExtravaganza {
 
 	/**
-	 * Escapes a name according to the conventions of a specific database (like `MySQL` or "Postgres").
+	 * Escapes a name according to the conventions of a specific database (like
+	 * `MySQL` or "Postgres").
 	 */
 	String escapeName(final String $name);
-	
+
 	/**
 	 * 
 	 */
@@ -26,42 +27,42 @@ public interface DatabaseExtravaganza {
 	 * 
 	 */
 	String getSqlType(Property $property);
-	
+
 	/**
 	 * Returns the canonical name of the database driver being used.
 	 */
 	String getDriverName();
-	
+
 	/**
 	 * Creates a database using the given $pool and $schema.
 	 */
 	void createDatabase(ConnectionProvider $pool, Schema $schema);
 
 	/**
-	 * Drops an existing database using the given $pool and $schema.
-         * <br><br>
-         * Note: Tables NOT belonging to the current Schema defined by this
-         * DatabaseAccess are completely ignored. This means if the Database
-         * Access used to define the Database had MORE tables than the current
-         * DatabaseAccess used to access the database now, the tables not incl
-         * uded in the current DatabaseAccess will be ignored.
-         * <br><br>
-         * If you wish to drop everything
-         * use {@link #dropAllTablesInDatabase() dropAllTablesInDatabase()}.
+	 * Drops an existing database using the given $pool and $schema. <br>
+	 * <br>
+	 * Note: Tables NOT belonging to the current Schema defined by this
+	 * DatabaseAccess are completely ignored. This means if the Database Access
+	 * used to define the Database had MORE tables than the current
+	 * DatabaseAccess used to access the database now, the tables not incl uded
+	 * in the current DatabaseAccess will be ignored. <br>
+	 * <br>
+	 * If you wish to drop everything use {@link #dropAllTablesInDatabase(ConnectionProvider) dropAllTablesInDatabase}.
 	 */
 	void dropDatabase(ConnectionProvider $pool, Schema $schema);
 
-        /**
-         * Drops the current DB and recreates it without tables afterwards.
-         * This is useful if you need to drop all tables in the DB, regardless
-         * of which Schema was used to generate your DatabaseAccess object.
-         * <br><br>
-         * See also the JavaDoc for the method {@link #dropDatabase() dropDatabase()}.
-         * <br><br>
-         * Note: User must have DROP-Privilege or be the owner of the Database!
-         */
-        void dropAllTablesInDatabase(ConnectionProvider $pool);
-        
+	/**
+	 * Drops the current DB and recreates it without tables afterwards. This is
+	 * useful if you need to drop all tables in the DB, regardless of which
+	 * Schema was used to generate your DatabaseAccess object. <br>
+	 * <br>
+	 * See also the JavaDoc for the method {@link #dropDatabase(ConnectionProvider, Schema)
+	 * dropDatabase()}. <br>
+	 * <br>
+	 * Note: User must have DROP-Privilege or be the owner of the Database!
+	 */
+	void dropAllTablesInDatabase(ConnectionProvider $pool);
+
 	/**
 	 * 
 	 */
@@ -81,12 +82,12 @@ public interface DatabaseExtravaganza {
 	 * 
 	 */
 	String makeSelectQuery(String $table, Integer $offset, Integer $limit);
-	
+
 	/**
 	 * 
 	 */
 	String makeSelectQuery(String $table, int $id);
-	
+
 	/**
 	 * 
 	 */

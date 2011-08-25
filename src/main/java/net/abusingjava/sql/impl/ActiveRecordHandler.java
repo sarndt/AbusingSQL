@@ -149,6 +149,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			} else if ($oldValues.containsKey($propertyName)) {
 				return $oldValues.get($propertyName);
 			}
+			return null;
 			
 		} else if ($methodName.startsWith("set")) {
 			String $propertyName = $methodName.substring(3);
