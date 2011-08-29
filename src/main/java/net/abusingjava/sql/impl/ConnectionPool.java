@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
@@ -45,7 +47,7 @@ public class ConnectionPool implements ConnectionProvider {
 					Thread.sleep($reaperDelay);
 				} catch (InterruptedException $exc) {}
 				if (Thread.interrupted()) {
-					return;
+					break;
 				}
 				reapConnections();
 			}
@@ -127,14 +129,18 @@ public class ConnectionPool implements ConnectionProvider {
 	void reapConnections() {
 		synchronized ($connections) {
 			long $stale = System.currentTimeMillis() - $reaperTimeout;
+			Set<ConnectionObject> $remove = new HashSet<ConnectionObject>();
 			for (ConnectionObject $o : $connections) {
 				if ($o.$inUse) {
 					if (($o.$timestamp < $stale) && !$o.validate()) {
-						$connections.remove($o);
+						$remove.add($o);
 					}
 				} else if (!$o.validate()) {
-					$connections.remove($o);
+					$remove.add($o);
 				}
+			}
+			for (ConnectionObject $r : $remove) {
+				$remove.remove($r);
 			}
 			for (int $i = 0; $i < ($poolsize - $connections.size()); $i++) {
 				try {
