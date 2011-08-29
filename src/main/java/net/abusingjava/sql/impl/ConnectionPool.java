@@ -98,7 +98,7 @@ public class ConnectionPool implements ConnectionProvider {
 	 * @param $reaperDelay Das Interval (in Millisekunden) in dem der Connection-Reaper alte Verbindungen entsorgt.
 	 * @param $reaperTimeout Die Anzahl Millisekunden die eine Verbindung nicht mehr genutzt sein muss, damit der Reaper sie entsorgt.
 	 * @param $connectionTimeout Die Anzahl der Millisekunden die eine Verbindung Zeit hat einen erfolgreichen ping zu senden, bevor sie als invalid angesehen wird und erneuert würde.
-	 * @throws ClassNotFoundException Wenn die durch $driverClassName angegebene Klasse nicht gefunden wurde. 
+	 * @throws ClassNotFoundException Wenn die durch $driverClassName angegebene Klasse nicht gefunden wurde.
 	 * @throws SQLException Wenn es Fehler beim Erstellen der Verbindungen gab.
 	 */
 	public ConnectionPool(final String $driverClassName, final String $url, final String $user, final String $password, final int $poolsize, final int $reaperDelay, final int $reaperTimeout, final int $connectionTimeout)
@@ -187,16 +187,18 @@ public class ConnectionPool implements ConnectionProvider {
 	
 	@Override
 	public void close() {
-		for (ConnectionObject $o : $connections) {
-			try {
-				if (!$o.$connection.getAutoCommit()) {
-					$o.$connection.commit();
+		synchronized ($connections) {
+			for (ConnectionObject $o : $connections) {
+				try {
+					if (!$o.$connection.getAutoCommit()) {
+						$o.$connection.commit();
+					}
+				} catch (SQLException $exc) {
 				}
-			} catch (SQLException $exc) {
-			}
-			try {
-				$o.$connection.close();
-			} catch (SQLException $exc) {
+				try {
+					$o.$connection.close();
+				} catch (SQLException $exc) {
+				}
 			}
 		}
 	}

@@ -1,9 +1,6 @@
 package net.abusingjava.sql;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import net.abusingjava.Author;
@@ -23,6 +20,7 @@ public class Interface {
 	final UniqueKey[] $uniqueKeys;
 	final Schema $parent;
 	final Action $onDelete;
+	final Property $toStringProperty;
 	
 	Interface(final Schema $parent, final Class<?> $class) {
 		if ($class == null) {
@@ -41,6 +39,7 @@ public class Interface {
 		$properties = new Property[$p.size()];
 		int $i = 0;
 		Map<String,List<Property>> $keys = new HashMap<String,List<Property>>();
+		Property $toStringProperty = null;
 		for (String $key : $p.keySet()) {
 			Property $property = new Property(this, $class, $key);
 			$properties[$i++] = $property;
@@ -51,7 +50,11 @@ public class Interface {
 				}
 				$keys.get($keyName).add($property);
 			}
+			if ($property.isToStringProperty()) {
+				$toStringProperty = $property;
+			}
 		}
+		this.$toStringProperty = $toStringProperty;
 		List<UniqueKey> $uniqueKeys = new LinkedList<UniqueKey>();
 		for (Entry<String,List<Property>> $e : $keys.entrySet()) {
 			if ($e.getKey().isEmpty()) {
@@ -85,6 +88,14 @@ public class Interface {
 	
 	public UniqueKey[] getUniqueKeys() {
 		return $uniqueKeys;
+	}
+	
+	public boolean hasToStringProperty() {
+		return $toStringProperty != null;
+	}
+	
+	public Property getToStringProperty() {
+		return $toStringProperty;
 	}
 
 	public Property getProperty(final String $name) {

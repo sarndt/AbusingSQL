@@ -88,7 +88,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 		} else if ($methodName == "set") {
 			String $propertyName = (String) $args[0];
 			if ($propertyChangeSupport == null) {
-				$newValues.put($propertyName, $args[1]);	
+				$newValues.put($propertyName, $args[1]);
 			} else {
 				Object $oldValue = null;
 				if ($newValues.containsKey($propertyName)) {
@@ -291,7 +291,20 @@ public class ActiveRecordHandler implements InvocationHandler {
 				}
 			}
 		} else if ($methodName == "toString") {
+			if (($interface != null) && $interface.hasToStringProperty()) {
+				String $name = DatabaseSQL.makeSQLName($interface.getToStringProperty().getName());
+				if ($oldValues.containsKey($name)) {
+					return $oldValues.get($name);
+				} else if ($newValues.containsKey($name)) {
+					return $newValues.get($name);
+				}
+			}
 			return $interface.getName() + '#' + $id;
+			
+		} else if ($methodName == "keys") {
+			Set<String> $keys = new HashSet<String>($oldValues.keySet());
+			$keys.addAll($newValues.keySet());
+			return $keys.toArray(new String[$keys.size()]);
 			
 		} else if ($methodName == "hasChanges") {
 			return !$newValues.isEmpty();

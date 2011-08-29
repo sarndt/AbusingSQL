@@ -78,4 +78,9 @@ public interface ActiveRecord<T> extends SupportsPropertyChangeEvents {
 	 * 
 	 */
 	T clearCache();
+	
+	/**
+	 * 
+	 */
+	String[] keys();
 }

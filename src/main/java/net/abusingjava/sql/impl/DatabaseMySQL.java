@@ -235,7 +235,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
         public void dropAllTablesInDatabase(final ConnectionProvider $pool) {
             try {
                 
-                Connection $c = $pool.getConnection();   
+                Connection $c = $pool.getConnection();
                 String $dbname= $pool.getSchemaNameFromURL();
                 Statement $stmt = $c.createStatement();
                 $stmt.execute("DROP DATABASE "+$dbname);
@@ -303,6 +303,12 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			$value = $resultSet.getShort($column);
 		} else if (($javaType == byte.class) || ($javaType == Byte.class)) {
 			$value = $resultSet.getByte($column);
+		} else if (java.util.Date.class.isAssignableFrom($javaType)) {
+			try {
+				$value = new Date($resultSet.getTimestamp($column).getTime());
+			} catch (Exception $exc) {
+				$value = null;
+			}
 		} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
 			$value = $resultSet.getInt($column);
 		}

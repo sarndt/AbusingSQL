@@ -24,6 +24,7 @@ public class Property {
 	final Interface $parent;
 	final Long $min;
 	final Long $max;
+	final boolean $isToStringProperty;
 	final Object $default;
 	final Set<ManyToMany> $manyToMany = new HashSet<ManyToMany>();
 	Property $onePart = null;
@@ -67,6 +68,7 @@ public class Property {
 			if (AbusingArrays.containsType($annotations, Max.class)) {
 				$max = AbusingArrays.firstOfType($annotations, Max.class).value();
 			}
+			$isToStringProperty = AbusingArrays.containsType($annotations, ToString.class);
 			this.$min = $min;
 			this.$max = $max;
 			this.$isNullable = !AbusingArrays.containsType($annotations, NotNull.class)
@@ -132,6 +134,10 @@ public class Property {
 			}
 		}
 		return $onePart;
+	}
+	
+	public boolean isToStringProperty() {
+		return $isToStringProperty;
 	}
 	
 	public boolean isManyToManyPart() {
