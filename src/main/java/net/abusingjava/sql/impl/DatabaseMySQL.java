@@ -1,7 +1,7 @@
 package net.abusingjava.sql.impl;
 
+import static net.abusingjava.AbusingStrings.*;
 import static net.abusingjava.functions.AbusingFunctions.*;
-import static net.abusingjava.strings.AbusingStrings.*;
 
 import java.math.BigDecimal;
 import java.sql.*;

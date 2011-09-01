@@ -2,7 +2,7 @@ package net.abusingjava.sql;
 
 import java.util.List;
 
-import net.abusingjava.strings.AbusingStrings;
+import net.abusingjava.AbusingStrings;
 
 public class UniqueKey {
 
