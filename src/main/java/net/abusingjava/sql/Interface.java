@@ -3,9 +3,9 @@ package net.abusingjava.sql;
 import java.util.*;
 import java.util.Map.Entry;
 
+import net.abusingjava.AbusingBeans;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.beans.AbusingBeans;
 import net.abusingjava.sql.impl.DatabaseSQL;
 
 @Author("Julian Fleischer")

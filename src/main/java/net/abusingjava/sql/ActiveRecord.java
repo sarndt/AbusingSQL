@@ -3,8 +3,8 @@ package net.abusingjava.sql;
 import java.sql.Connection;
 
 import net.abusingjava.Author;
+import net.abusingjava.SupportsPropertyChangeEvents;
 import net.abusingjava.Version;
-import net.abusingjava.beans.SupportsPropertyChangeEvents;
 
 /**
  * 
