@@ -3,7 +3,7 @@ package net.abusingjava.sql;
 import java.util.*;
 import java.util.Map.Entry;
 
-import net.abusingjava.AbusingBeans;
+import net.abusingjava.AbusingReflection;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.impl.DatabaseSQL;
@@ -34,7 +34,7 @@ public class Interface {
 		this.$simpleName = $class.getSimpleName();
 		this.$sqlName = DatabaseSQL.makeSQLName($simpleName);
 		
-		Map<String,Class<?>> $p = AbusingBeans.getProperties($class);
+		Map<String,Class<?>> $p = AbusingReflection.properties($class);
 		$p.remove("Id");
 		$properties = new Property[$p.size()];
 		int $i = 0;

@@ -37,7 +37,7 @@ public class Property {
 			Method $getter = $class.getMethod("get" + $name);
 			$javaType = $getter.getReturnType();
 			if (Set.class.isAssignableFrom($javaType)) {
-				$genericType = AbusingReflection.getGenericBaseType($getter.getGenericReturnType());
+				$genericType = AbusingReflection.genericBaseType($getter.getGenericReturnType());
 				$isManyPart = false;
 			} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
 				$genericType = null;
