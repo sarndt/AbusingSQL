@@ -14,9 +14,13 @@ import java.util.Map.Entry;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.*;
+import net.abusingjava.sql.ActiveRecord;
+import net.abusingjava.sql.DatabaseAccess;
+import net.abusingjava.sql.DatabaseException;
+import net.abusingjava.sql.DatabaseExtravaganza;
 import net.abusingjava.sql.schema.Entity;
 import net.abusingjava.sql.schema.Interface;
+import net.abusingjava.sql.schema.ManyToMany;
 import net.abusingjava.sql.schema.Property;
 
 /**
@@ -127,9 +131,15 @@ public class ActiveRecordHandler implements InvocationHandler {
 				
 			} else if ($property.getGenericType() != null) {
 				if ($property.isManyToManyPart()) {
-					
-					
-					throw new UnsupportedOperationException("ManyToMany-Relationships are currently not resolved.");
+					for (ManyToMany $m : $property.getManyToManyRelationships()) {
+						System.out.printf(":: %s %s\n", $m.getFrom().getName(), $m.getTo().getName());
+						if (($m.getFrom().getJavaType() == $property.getGenericType())
+								|| ($m.getTo().getJavaType() == $property.getGenericType())) {
+							System.out.println("-> The other: " + $property.getGenericType());
+						}
+					}
+					return new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, null);
+					//throw new UnsupportedOperationException("ManyToMany-Relationships are currently not resolved.");
 				}
 				if (!$resolvedSets.containsKey($property.getSqlName())) {
 					@SuppressWarnings("unchecked")

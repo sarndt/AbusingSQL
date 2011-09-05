@@ -1,5 +1,6 @@
 package net.abusingjava.sql.impl;
 
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Proxy;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,8 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.ActiveRecord;
 import net.abusingjava.sql.DatabaseAccess;
 import net.abusingjava.sql.RecordSet;
+
+import org.jdesktop.observablecollections.ObservableListListener;
 
 @Author("Julian Fleischer")
 @Version("2011-08-17")
@@ -35,10 +38,50 @@ public class ObjectRecordSet extends LinkedList<ActiveRecord<?>> implements Reco
 	public void saveChanges() {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public void discardChanges() {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public void deleteAll() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void addPropertyChangeListener(final PropertyChangeListener $l) {
+		
+	}
+
+	@Override
+	public void removePropertyChangeListener(final PropertyChangeListener $l) {
+		
+	}
+
+	@Override
+	public PropertyChangeListener[] getPropertyChangeListeners() {
+		return null;
+	}
+
+	@Override
+	public void addObservableListListener(final ObservableListListener listener) {
+		
+	}
+
+	@Override
+	public void removeObservableListListener(final ObservableListListener listener) {
+		
+	}
+
+	@Override
+	public boolean supportsElementPropertyChanged() {
+		return false;
+	}
+
+	@Override
+	public void installPropertyChangeListeners() {
+		
 	}
 
 }
