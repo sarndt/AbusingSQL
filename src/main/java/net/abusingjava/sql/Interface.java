@@ -26,7 +26,7 @@ public class Interface {
 		if ($class == null) {
 			throw new IllegalArgumentException("$interface may not be null.");
 		} else if (!$class.isInterface()) {
-			throw new IllegalArgumentException("$interface must be an interface");
+			throw new IllegalArgumentException("$interface must be an interface (" + $class + ")");
 		}
 		this.$parent = $parent;
 		this.$interface = $class;

@@ -1,11 +1,12 @@
 package net.abusingjava.sql.impl;
 
 import static net.abusingjava.AbusingStrings.*;
-import static net.abusingjava.functions.AbusingFunctions.*;
+import static net.abusingjava.functions.AbusingFunctions.callback;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Date;
+import java.util.EnumSet;
 
 import net.abusingjava.Author;
 import net.abusingjava.Since;
@@ -173,6 +174,15 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			} else {
 				$builder.append("VARBINARY(32)");
 			}
+		} else if ($javaType == EnumSet.class) {
+			$builder.append("SET('");
+			Enum<?>[] $enums = (Enum[]) $property.getEnumType().getEnumConstants();
+			String[] $enumNames = new String[$enums.length];
+			for (int $i = 0; $i < $enums.length; $i++) {
+			        $enumNames[$i] = $enums[$i].name();
+			}
+			$builder.append(implode("', '", $enumNames));
+			$builder.append("')");
 		} else if ($javaType.isEnum()) {
 			$builder.append("ENUM('");
 			Enum<?>[] $enums = (Enum[]) $javaType.getEnumConstants();

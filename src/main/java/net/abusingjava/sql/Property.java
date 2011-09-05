@@ -2,6 +2,7 @@ package net.abusingjava.sql;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class Property {
 	final Class<?> $javaType;
 	final Class<?> $genericType;
 	final boolean $isManyPart;
+	final Class<?> $enumType;
 	final String $uniqueKey;
 	final boolean $isNullable;
 	final Interface $parent;
@@ -36,15 +38,22 @@ public class Property {
 		try {
 			Method $getter = $class.getMethod("get" + $name);
 			$javaType = $getter.getReturnType();
-			if (Set.class.isAssignableFrom($javaType)) {
+			if (EnumSet.class.isAssignableFrom($javaType)) {
+				$enumType = AbusingReflection.genericBaseType($getter.getGenericReturnType());
+				$isManyPart = false;
+				$genericType = null;
+			} else if (Set.class.isAssignableFrom($javaType)) {
 				$genericType = AbusingReflection.genericBaseType($getter.getGenericReturnType());
 				$isManyPart = false;
+				$enumType = null;
 			} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
 				$genericType = null;
 				$isManyPart = true;
+				$enumType = null;
 			} else {
 				$genericType = null;
 				$isManyPart = false;
+				$enumType = null;
 			}
 			Method $setter = $class.getMethod("set" + $name, $javaType);
 			Annotation[] $annotations = AbusingArrays.concat(
@@ -117,6 +126,14 @@ public class Property {
 	
 	public Class<?> getGenericType() {
 		return $genericType;
+	}
+	
+	public boolean isEnumType() {
+		return $enumType != null;
+	}
+	
+	public Class<?> getEnumType() {
+		return $enumType;
 	}
 	
 	public boolean isManyPart() {
