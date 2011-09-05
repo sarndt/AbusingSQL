@@ -1,12 +1,16 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.abusingjava.*;
+import net.abusingjava.sql.ActiveRecord;
+import net.abusingjava.sql.ToString;
+import net.abusingjava.sql.Unique;
 import net.abusingjava.sql.impl.DatabaseSQL;
 
 @Author("Julian Fleischer")
@@ -157,6 +161,10 @@ public class Property {
 	
 	public boolean isManyToManyPart() {
 		return !$manyToMany.isEmpty();
+	}
+	
+	public Set<ManyToMany> getManyToManyRelationships() {
+		return Collections.unmodifiableSet($manyToMany);
 	}
 	
 	public boolean isUnique() {

@@ -15,6 +15,9 @@ import java.util.Map.Entry;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.*;
+import net.abusingjava.sql.schema.Entity;
+import net.abusingjava.sql.schema.Interface;
+import net.abusingjava.sql.schema.Property;
 
 /**
  * Implements an ActiveRecord at Runtime.
@@ -124,6 +127,8 @@ public class ActiveRecordHandler implements InvocationHandler {
 				
 			} else if ($property.getGenericType() != null) {
 				if ($property.isManyToManyPart()) {
+					
+					
 					throw new UnsupportedOperationException("ManyToMany-Relationships are currently not resolved.");
 				}
 				if (!$resolvedSets.containsKey($property.getSqlName())) {

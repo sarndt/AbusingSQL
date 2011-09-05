@@ -5,6 +5,7 @@ import java.sql.Connection;
 import net.abusingjava.Author;
 import net.abusingjava.Experimental;
 import net.abusingjava.Version;
+import net.abusingjava.sql.schema.Schema;
 
 /**
  * A DatabaseAccess-object is the central object which gives you access to the Database.

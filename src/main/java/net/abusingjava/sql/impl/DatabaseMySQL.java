@@ -12,6 +12,7 @@ import net.abusingjava.Author;
 import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.sql.*;
+import net.abusingjava.sql.schema.*;
 
 @Author("Julian Fleischer")
 @Version("2011-08-15")

@@ -7,7 +7,7 @@ import net.abusingjava.Author;
 import net.abusingjava.Experimental;
 import net.abusingjava.Since;
 import net.abusingjava.sql.DatabaseAccess;
-import net.abusingjava.sql.Interface;
+import net.abusingjava.sql.schema.Interface;
 
 @Author("Julian Fleischer")
 @Since("1.0")

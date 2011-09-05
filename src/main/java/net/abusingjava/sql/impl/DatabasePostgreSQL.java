@@ -13,8 +13,8 @@ import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.sql.ConnectionProvider;
 import net.abusingjava.sql.DatabaseException;
-import net.abusingjava.sql.Property;
-import net.abusingjava.sql.Schema;
+import net.abusingjava.sql.schema.Property;
+import net.abusingjava.sql.schema.Schema;
 
 @Author("Julian Fleischer")
 @Version("2011-08-18")

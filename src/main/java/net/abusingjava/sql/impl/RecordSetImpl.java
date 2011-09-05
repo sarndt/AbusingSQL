@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.*;
+import net.abusingjava.sql.schema.Interface;
 
 @Author("Julian Fleischer")
 @Version("2011-08-15")

@@ -1,4 +1,4 @@
-package net.abusingjava.sql;
+package net.abusingjava.sql.schema;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import net.abusingjava.AbusingReflection;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.sql.Action;
+import net.abusingjava.sql.OnDelete;
 import net.abusingjava.sql.impl.DatabaseSQL;
 
 @Author("Julian Fleischer")
