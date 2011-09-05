@@ -306,9 +306,10 @@ public class ActiveRecordHandler implements InvocationHandler {
 						if ($resolvedSets.containsKey($sqlName)) {
 							Set<Integer> $ids = new TreeSet<Integer>();
 							for (ActiveRecord<?> $record : $resolvedSets.get($sqlName)) {
-								if ($record.exists()) {
-									$ids.add($record.getId());
+								if (!$record.exists()) {
+									$record.saveChanges();
 								}
+								$ids.add($record.getId());
 							}
 							// TODO: Check the following line for possible misbehaviour
 							ManyToMany $m = $p.getManyToManyRelationships().iterator().next();
