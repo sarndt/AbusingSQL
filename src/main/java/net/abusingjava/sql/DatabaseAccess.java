@@ -6,10 +6,10 @@ import net.abusingjava.Author;
 import net.abusingjava.Version;
 
 /**
- * 
+ * A DatabaseAccess-object is the central object which gives you access to the Database.
  */
 @Author("Julian Fleischer")
-@Version("2011-08-15")
+@Version("2011-09-05")
 public interface DatabaseAccess {
 
 	/**
@@ -30,42 +30,45 @@ public interface DatabaseAccess {
 	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class);
 
 	/**
-	 * Like select(), but with a $limit.
+	 * Like {@link #select(Class)}, but with a $limit.
 	 */
 	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $limit);
 
 	/**
-	 * Like select(), but with $offset and $limit.
+	 * Like {@link #select(Class)}, but with $offset and $limit.
 	 */
 	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, int $offset, int $limit);
 
 	/**
-	 * 
+	 * Performs a custom $query with the given $values - the Result will be a RecordSet containing objects of the given $class.
 	 */
 	<T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final String $query, Object... $values);
 
 	/**
-	 * 
+	 * Performs a custom $query with the given $values - the Result will be a RecordSet containing objects of type <code>ActiveRecord&lt?></code>.
 	 */
 	RecordSet<ActiveRecord<?>> query(final String $preparedQuery, Object... $values);
 
 	/**
-	 * 
+	 * Performs a custom $query and returns the first result in the resulting RecordSet (or null if there was no result).
 	 */
 	ActiveRecord<?> querySingle(final String $preparedQuery, Object... $values);
 
 	/**
-	 * 
+	 * Selects a single object of type $class by its $id.
 	 */
 	<T extends ActiveRecord<?>> T selectById(Class<T> $class, int $id);
 
 	/**
-	 * 
+	 * Creates a new ActiveRecord of the given $class.
+	 * Please note that the object is instantiated in the Database
+	 * only if you call {@link ActiveRecord#saveChanges() saveChanges()}
+	 * on that object.
 	 */
 	<T extends ActiveRecord<?>> T create(final Class<T> $class);
 
 	/**
-	 * 
+	 * Creates a new ActiveRecord of the given $class and a known $id - <b>Please do use for updating objects only!</b>.
 	 */
 	<T extends ActiveRecord<?>> T create(final Class<T> $class, int $id);
 
