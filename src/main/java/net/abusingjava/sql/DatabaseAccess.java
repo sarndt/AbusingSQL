@@ -3,6 +3,7 @@ package net.abusingjava.sql;
 import java.sql.Connection;
 
 import net.abusingjava.Author;
+import net.abusingjava.Experimental;
 import net.abusingjava.Version;
 
 /**
@@ -70,6 +71,7 @@ public interface DatabaseAccess {
 	/**
 	 * Creates a new ActiveRecord of the given $class and a known $id - <b>Please do use for updating objects only!</b>.
 	 */
+	@Experimental
 	<T extends ActiveRecord<?>> T create(final Class<T> $class, int $id);
 
 	/**

@@ -4,12 +4,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 import net.abusingjava.Author;
+import net.abusingjava.Experimental;
 import net.abusingjava.Since;
 import net.abusingjava.sql.DatabaseAccess;
 import net.abusingjava.sql.Interface;
 
 @Author("Julian Fleischer")
 @Since("1.0")
+@Experimental
 public class ActiveRecordUpdateHandler implements InvocationHandler {
 
 	final DatabaseAccess $dbAccess;
