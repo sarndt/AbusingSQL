@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import net.abusingjava.AbusingStrings;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.*;
@@ -127,6 +128,9 @@ public class ActiveRecordHandler implements InvocationHandler {
 				return $record;
 				
 			} else if ($property.getGenericType() != null) {
+				if ($id == null) {
+					$resolvedSets.put($property.getSqlName(), new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, $property.getParent()));
+				}
 				if (!$resolvedSets.containsKey($property.getSqlName())) {
 					if ($property.isManyToManyPart()) {
 						for (ManyToMany $m : $property.getManyToManyRelationships()) {
@@ -186,10 +190,9 @@ public class ActiveRecordHandler implements InvocationHandler {
 				$resolvedRecords.put($propertyName, (ActiveRecord<?>) $args[0]);
 				$args[0] = ((ActiveRecord<?>)$args[0]).getId();
 			} else if ($property.getGenericType() != null) {
-				if ($property.isManyToManyPart()) {
-					throw new UnsupportedOperationException("ManyToMany-Relationships are currently not saved :-(");
-				}
-				throw new UnsupportedOperationException("We’re working on this.");
+				@SuppressWarnings("unchecked")
+				SetList<ActiveRecord<?>> $set = (SetList<ActiveRecord<?>>) $args[0];
+				$resolvedSets.put($property.getSqlName(), $set);
 			}
 			Object $oldValue = null;
 			if ($newValues.containsKey($propertyName)) {
@@ -292,6 +295,65 @@ public class ActiveRecordHandler implements InvocationHandler {
 				} else {
 					if (!$newValues.isEmpty()) {
 						$dbAccess.getDatabaseExtravaganza().doUpdate($c, $interface.getSqlName(), $properties, $values, $id);
+					}
+				}
+				for (Property $p : $interface.getProperties()) {
+					if ($p.isManyToManyPart()) {
+						String $sqlName = $p.getSqlName();
+						if ($resolvedSets.containsKey($sqlName)) {
+							Set<Integer> $ids = new TreeSet<Integer>();
+							for (ActiveRecord<?> $record : $resolvedSets.get($sqlName)) {
+								if ($record.exists()) {
+									$ids.add($record.getId());
+								}
+							}
+							// TODO: Check the following line for possible misbehaviour
+							ManyToMany $m = $p.getManyToManyRelationships().iterator().next();
+							String $iName = "f_" + $interface.getSqlName();
+							String $fName = "f_" + $m.getTheOther($p).getParent().getSqlName();
+							String $rName = $m.getFrom().getSqlName() + "_2_" + $m.getTo().getSqlName();
+							String $query = String.format("SELECT %s FROM %s WHERE %s = ?",
+								$dbAccess.getDatabaseExtravaganza().escapeName($fName),
+								$dbAccess.getDatabaseExtravaganza().escapeName($rName),
+								$dbAccess.getDatabaseExtravaganza().escapeName($iName)
+							);
+							RecordSet<?> $records = $dbAccess.query($query, $id);
+							Set<Integer> $realIds = new TreeSet<Integer>();
+							for (ActiveRecord<?> $record : $records) {
+								$realIds.add((Integer) $record.get($fName));
+							}
+							Set<Integer> $idsToRemove = new TreeSet<Integer>();
+							$idsToRemove.addAll($realIds);
+							$idsToRemove.removeAll($ids);
+							$ids.removeAll($realIds);
+							
+							System.out.println($idsToRemove);
+							System.out.println($ids);
+							
+							if ($idsToRemove.size() > 0) {
+								String[] $where = new String[$idsToRemove.size()];
+								int $j = 0;
+								for (Integer $oldId : $idsToRemove) {
+									$where[$j] = $dbAccess.getDatabaseExtravaganza().escapeName($fName) + " = " + $oldId;
+									$j++;
+								}
+								$query = String.format("DELETE FROM %s WHERE %s = ? AND (%s)",
+										$dbAccess.getDatabaseExtravaganza().escapeName($rName),
+										$dbAccess.getDatabaseExtravaganza().escapeName($iName),
+										AbusingStrings.implode(" OR ", $where)
+									);
+								$dbAccess.exec($query, $id);
+							}
+							if ($ids.size() > 0) {
+								for (Integer $newId : $ids) {
+									$query = String.format("INSERT INTO %s (%s, %s) VALUES (?, ?)",
+										$dbAccess.getDatabaseExtravaganza().escapeName($rName),
+										$dbAccess.getDatabaseExtravaganza().escapeName($iName),
+										$dbAccess.getDatabaseExtravaganza().escapeName($fName));
+									$dbAccess.exec($query, $id, $newId);
+								}
+							}
+						}
 					}
 				}
 			} catch (SQLException $exc) {

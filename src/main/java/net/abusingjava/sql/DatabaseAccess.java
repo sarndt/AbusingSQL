@@ -57,6 +57,11 @@ public interface DatabaseAccess {
 	ActiveRecord<?> querySingle(final String $preparedQuery, Object... $values);
 
 	/**
+	 * Executes a query which does not return a Result (such as DELETE, UPDATE, ...).
+	 */
+	void exec(final String $preparedQuery, Object... $values);
+	
+	/**
 	 * Selects a single object of type $class by its $id.
 	 */
 	<T extends ActiveRecord<?>> T selectById(Class<T> $class, int $id);

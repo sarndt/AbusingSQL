@@ -39,7 +39,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		try {
 			return $pool.getConnection();
 		} catch (SQLException $exc) {
-			throw new DatabaseException($exc); 
+			throw new DatabaseException($exc);
 		}
 	}
 	
@@ -142,12 +142,33 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 			try {
 				PreparedStatement $stmt = $c.prepareStatement($query, ResultSet.TYPE_FORWARD_ONLY);
 				for (int $i = 0; $i < $values.length; $i++) {
-					$extravaganza.set($stmt, $i, $values[$i]);
+					$extravaganza.set($stmt, $i+1, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
 				ObjectRecordSet $recordSet = new ObjectRecordSet(this, $result);
 				$stmt.close();
 				return $recordSet;
+			} catch (SQLException $exc) {
+				throw $exc;
+			} finally {
+				$pool.release($c);
+			}
+		} catch (SQLException $exc) {
+			throw new DatabaseException($exc);
+		}
+	}
+	
+	@Override
+	public void exec(final String $query, final Object... $values) {
+		try {
+			Connection $c = $pool.getConnection();
+			try {
+				PreparedStatement $stmt = $c.prepareStatement($query, ResultSet.TYPE_FORWARD_ONLY);
+				for (int $i = 0; $i < $values.length; $i++) {
+					$extravaganza.set($stmt, $i+1, $values[$i]);
+				}
+				$stmt.execute();
+				$stmt.close();
 			} catch (SQLException $exc) {
 				throw $exc;
 			} finally {
