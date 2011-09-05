@@ -38,6 +38,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 	
 	private Integer $id = null;
 
+	
 	ActiveRecordHandler(final DatabaseAccess $dbAccess, final ResultSet $resultSet) throws SQLException {
 		this.$dbAccess = $dbAccess;
 		this.$interface = null;
@@ -128,10 +129,12 @@ public class ActiveRecordHandler implements InvocationHandler {
 				return $record;
 				
 			} else if ($property.getGenericType() != null) {
-				if ($id == null) {
-					$resolvedSets.put($property.getSqlName(), new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, $property.getParent()));
-				}
 				if (!$resolvedSets.containsKey($property.getSqlName())) {
+					if ($id == null) {
+						SetList<ActiveRecord<?>> $record = new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, $property.getParent());
+						$resolvedSets.put($property.getSqlName(), $record);
+						return $record;
+					}
 					if ($property.isManyToManyPart()) {
 						for (ManyToMany $m : $property.getManyToManyRelationships()) {
 							if (($m.getFrom().getJavaType() == $property.getGenericType())
@@ -326,9 +329,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 							$idsToRemove.addAll($realIds);
 							$idsToRemove.removeAll($ids);
 							$ids.removeAll($realIds);
-							
-							System.out.println($idsToRemove);
-							System.out.println($ids);
 							
 							if ($idsToRemove.size() > 0) {
 								String[] $where = new String[$idsToRemove.size()];
