@@ -14,10 +14,7 @@ import java.util.Map.Entry;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.ActiveRecord;
-import net.abusingjava.sql.DatabaseAccess;
-import net.abusingjava.sql.DatabaseException;
-import net.abusingjava.sql.DatabaseExtravaganza;
+import net.abusingjava.sql.*;
 import net.abusingjava.sql.schema.Entity;
 import net.abusingjava.sql.schema.Interface;
 import net.abusingjava.sql.schema.ManyToMany;
@@ -27,7 +24,7 @@ import net.abusingjava.sql.schema.Property;
  * Implements an ActiveRecord at Runtime.
  */
 @Author("Julian Fleischer")
-@Version("2011-08-17")
+@Version("2011-09-05")
 public class ActiveRecordHandler implements InvocationHandler {
 
 	private final DatabaseAccess $dbAccess;
@@ -36,7 +33,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 	private Map<String, Object> $oldValues = new HashMap<String, Object>();
 	private Map<String, Object> $newValues = new HashMap<String, Object>();
 	private final Map<String, ActiveRecord<?>> $resolvedRecords = new HashMap<String, ActiveRecord<?>>();
-	private final Map<String, Set<ActiveRecord<?>>> $resolvedSets = new HashMap<String, Set<ActiveRecord<?>>>();
+	private final Map<String, SetList<ActiveRecord<?>>> $resolvedSets = new HashMap<String, SetList<ActiveRecord<?>>>();
 	
 	private Integer $id = null;
 
@@ -130,22 +127,36 @@ public class ActiveRecordHandler implements InvocationHandler {
 				return $record;
 				
 			} else if ($property.getGenericType() != null) {
-				if ($property.isManyToManyPart()) {
-					for (ManyToMany $m : $property.getManyToManyRelationships()) {
-						System.out.printf(":: %s %s\n", $m.getFrom().getName(), $m.getTo().getName());
-						if (($m.getFrom().getJavaType() == $property.getGenericType())
-								|| ($m.getTo().getJavaType() == $property.getGenericType())) {
-							System.out.println("-> The other: " + $property.getGenericType());
-						}
-					}
-					return new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, null);
-					//throw new UnsupportedOperationException("ManyToMany-Relationships are currently not resolved.");
-				}
 				if (!$resolvedSets.containsKey($property.getSqlName())) {
+					if ($property.isManyToManyPart()) {
+						for (ManyToMany $m : $property.getManyToManyRelationships()) {
+							if (($m.getFrom().getJavaType() == $property.getGenericType())
+									|| ($m.getTo().getJavaType() == $property.getGenericType())) {
+								String $otherTable = $m.getTheOther($property).getParent().getSqlName();
+								String $relationTable = $m.getFrom().getSqlName() + "_2_" + $m.getTo().getSqlName();
+								String $query = String.format("SELECT %s.* FROM %s JOIN %s ON %s = %s.%s WHERE %s = ?",
+									$dbAccess.getDatabaseExtravaganza().escapeName($otherTable),
+									$dbAccess.getDatabaseExtravaganza().escapeName($relationTable),
+									$dbAccess.getDatabaseExtravaganza().escapeName($otherTable),
+									$dbAccess.getDatabaseExtravaganza().escapeName("f_" + $otherTable),
+									$dbAccess.getDatabaseExtravaganza().escapeName($otherTable),
+									$dbAccess.getDatabaseExtravaganza().escapeName("id"),
+									$dbAccess.getDatabaseExtravaganza().escapeName("f_" + $interface.getSqlName())
+								);
+								@SuppressWarnings("unchecked")
+								RecordSet<? extends ActiveRecord<?>> $result = $dbAccess.select((Class<? extends ActiveRecord<?>>) $property.getGenericType(), $query, $id);
+								@SuppressWarnings({"unchecked", "unused"})
+								SetList<? extends ActiveRecord<?>> $return = $resolvedSets.put($property.getSqlName(), (SetList<ActiveRecord<?>>) $result);
+								return $result;
+							}
+						}
+						// info: Illegal many-to-many relationship
+						return new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, null);
+					}
 					@SuppressWarnings("unchecked")
 					Class<ActiveRecord<?>> $recordType = (Class<ActiveRecord<?>>) $property.getGenericType();
 					String $onePart = $property.getOnePart().getSqlName();
-					Set<ActiveRecord<?>> $records = $dbAccess.select($recordType,
+					SetList<ActiveRecord<?>> $records = $dbAccess.select($recordType,
 							"SELECT * FROM " + $dbAccess.getDatabaseExtravaganza().escapeName(
 									$dbAccess.getSchema().getInterface($recordType).getSqlName()
 									) + " WHERE " + $dbAccess.getDatabaseExtravaganza().escapeName(

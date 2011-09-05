@@ -41,14 +41,21 @@ public class ManyToMany {
 		if ($fromProperty == null) {
 			$fromProperty = $parent.getInterface($from).getProperty($fromPropertyName);
 		}
-		return $fromProperty; 
+		return $fromProperty;
 	}
 	
 	public Property getToProperty() {
 		if ($toProperty == null) {
-			$toProperty = $parent.getInterface($to).getProperty($toPropertyName); 
+			$toProperty = $parent.getInterface($to).getProperty($toPropertyName);
 		}
 		return $toProperty;
+	}
+	
+	public Property getTheOther(final Property $property) {
+		if ($fromProperty.equals($property)) {
+			return $toProperty;
+		}
+		return $fromProperty;
 	}
 	
 	@Override
