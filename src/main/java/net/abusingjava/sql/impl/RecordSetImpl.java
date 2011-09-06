@@ -118,9 +118,9 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	@Override
 	public void installPropertyChangeListeners() {
 		if (!$supportsElementPropertyChanged) {
-			for (ActiveRecord<?> $record : this) {
+			//for (ActiveRecord<?> $record : this) {
 				// $record.addPropertyChangeListener(...)
-			}
+			// }
 			$supportsElementPropertyChanged = true;
 		}
 	}

@@ -1,5 +1,7 @@
 package net.abusingjava.sql.impl;
 
+import static net.abusingjava.functions.AbusingFunctions.callback;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationHandler;
@@ -15,6 +17,7 @@ import java.util.Map.Entry;
 import net.abusingjava.AbusingStrings;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
+import net.abusingjava.functions.AbusingFunctions;
 import net.abusingjava.sql.*;
 import net.abusingjava.sql.schema.Entity;
 import net.abusingjava.sql.schema.Interface;
@@ -56,12 +59,27 @@ public class ActiveRecordHandler implements InvocationHandler {
 		
 		for (Property $p : $interface.getProperties()) {
 			try {
-				$oldValues.put($p.getSqlName(),
-					$dbAccess.getDatabaseExtravaganza().get($resultSet, $p.getSqlName(), $p.getJavaType()));
+				if ($p.getEnumType() != null) {
+					$oldValues.put($p.getSqlName(),
+						AbusingFunctions.callback(this, "makeEnumSet").call($p.getEnumType(), $resultSet.getString($p.getSqlName())));
+				} else {
+					$oldValues.put($p.getSqlName(),
+						$dbAccess.getDatabaseExtravaganza().get($resultSet, $p.getSqlName(), $p.getJavaType()));
+				}
 			} catch (SQLException $exc) {
 			}
 		}
 		$id = $resultSet.getInt("id");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <E extends Enum<E>> EnumSet<E> makeEnumSet(final Class<E> $enumType, final String $values) {
+		String[] $parts = $values.split(",");
+		EnumSet<E> $set = EnumSet.noneOf($enumType);
+		for (String $part : $parts) {
+			$set.add((E) callback(Enum.class, "valueOf").call($enumType, $part));
+		}
+		return $set;
 	}
 
 	ActiveRecordHandler(final DatabaseAccess $dbAccess, final Interface $interface) {

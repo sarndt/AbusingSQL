@@ -136,8 +136,9 @@ public class Property {
 		return $enumType != null;
 	}
 	
-	public Class<?> getEnumType() {
-		return $enumType;
+	@SuppressWarnings("unchecked")
+	public Class<? extends Enum<?>> getEnumType() {
+		return (Class<? extends Enum<?>>) $enumType;
 	}
 	
 	public boolean isManyPart() {

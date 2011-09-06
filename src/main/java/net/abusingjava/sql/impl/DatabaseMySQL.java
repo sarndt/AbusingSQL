@@ -11,7 +11,9 @@ import java.util.EnumSet;
 import net.abusingjava.Author;
 import net.abusingjava.Since;
 import net.abusingjava.Version;
-import net.abusingjava.sql.*;
+import net.abusingjava.sql.ActiveRecord;
+import net.abusingjava.sql.ConnectionProvider;
+import net.abusingjava.sql.DatabaseException;
 import net.abusingjava.sql.schema.*;
 
 @Author("Julian Fleischer")
@@ -338,6 +340,8 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 				$stmt.setString($index, (String)$value);
 			} else if ($value instanceof Boolean) {
 				$stmt.setBoolean($index,  (Boolean)$value);
+			} else if ($value instanceof EnumSet) {
+				// TODO: EnumSet
 			} else if ($value instanceof Enum) {
 				$stmt.setString($index, ((Enum<?>)$value).name());
 			} else if ($value instanceof byte[]) {
