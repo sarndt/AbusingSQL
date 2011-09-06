@@ -28,7 +28,7 @@ import net.abusingjava.sql.schema.Property;
  * Implements an ActiveRecord at Runtime.
  */
 @Author("Julian Fleischer")
-@Version("2011-09-05")
+@Version("2011-09-06")
 public class ActiveRecordHandler implements InvocationHandler {
 
 	private final DatabaseAccess $dbAccess;

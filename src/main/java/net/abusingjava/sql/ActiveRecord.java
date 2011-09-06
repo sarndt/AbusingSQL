@@ -8,40 +8,43 @@ import net.abusingjava.SupportsPropertyChangeEvents;
 import net.abusingjava.Version;
 
 /**
- * 
+ * An ActiveRecord is an object which maintains its state in the database by itself.
  */
 @Author("Julian Fleischer")
 @Version("2011-08-15")
 public interface ActiveRecord<T> extends SupportsPropertyChangeEvents {
 
 	/**
-	 * 
+	 * Returns the unique identifier of this object or null, if it does not exist in the database.
 	 */
 	Integer getId();
 	
 	/**
-	 * 
+	 * Saves the changes which are done to this ActiveRecord. Any ActiveRecords which do not exist yet
+	 * but have been assigned to this object via a Many-to-Many-Relationship will also be saved (i.e. created)
+	 * if this method is invoked.
 	 */
 	T saveChanges();
 	
 	/**
-	 * 
-	 * 
+	 * Like {@link #saveChanges()}, but used the given connection for the task. This is mostly used internally
+	 * for using the same Connection within a Transaction.
 	 */
 	T saveChanges(Connection $c);
 	
 	/**
-	 * 
+	 * Like {@link #saveChanges()}, but upto a certain depth also invokes <code>saveChanges()</code> on
+	 * referenced objects.
 	 */
 	T saveChanges(int $depth);
 	
 	/**
-	 * 
+	 * A combination of {@link #saveChanges(Connection)} and {@link #saveChanges(Connection, int)}.
 	 */
 	T saveChanges(Connection $c, int $depth);
 	
 	/**
-	 * 
+	 * Restores the state of the object as it was when freshly fetched from the database (or created).
 	 */
 	T discardChanges();
 	
