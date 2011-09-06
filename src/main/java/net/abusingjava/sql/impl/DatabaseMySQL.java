@@ -8,6 +8,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.EnumSet;
 
+import net.abusingjava.AbusingStrings;
 import net.abusingjava.Author;
 import net.abusingjava.Since;
 import net.abusingjava.Version;
@@ -179,7 +180,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			}
 		} else if ($javaType == EnumSet.class) {
 			$builder.append("SET('");
-			Enum<?>[] $enums = (Enum[]) $property.getEnumType().getEnumConstants();
+			Enum<?>[] $enums = $property.getEnumType().getEnumConstants();
 			String[] $enumNames = new String[$enums.length];
 			for (int $i = 0; $i < $enums.length; $i++) {
 			        $enumNames[$i] = $enums[$i].name();
@@ -341,7 +342,14 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			} else if ($value instanceof Boolean) {
 				$stmt.setBoolean($index,  (Boolean)$value);
 			} else if ($value instanceof EnumSet) {
-				// TODO: EnumSet
+				EnumSet<?> $enumSet = (EnumSet<?>) $value;
+				String[] $names = new String[$enumSet.size()];
+				int $i = 0;
+				for (Enum<?> $e : $enumSet) {
+					$names[$i] = $e.name();
+					$i++;
+				}
+				$stmt.setString($index, AbusingStrings.implode(",", $names));
 			} else if ($value instanceof Enum) {
 				$stmt.setString($index, ((Enum<?>)$value).name());
 			} else if ($value instanceof byte[]) {
