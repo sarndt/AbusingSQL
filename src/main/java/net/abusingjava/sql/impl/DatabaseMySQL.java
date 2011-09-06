@@ -79,7 +79,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 						$b.append(implode(", ", $propertyNames));
 						$b.append("),\n\t");
 					}
-					$b.append("PRIMARY KEY (`id`)\n) ENGINE=InnoDB;\n");
+					$b.append("PRIMARY KEY (`id`)\n) ENGINE=InnoDB DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
 					
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);
