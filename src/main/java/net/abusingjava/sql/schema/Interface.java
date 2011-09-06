@@ -27,7 +27,16 @@ public class Interface {
 	final Schema $parent;
 	final Action $onDelete;
 	final Property $toStringProperty;
-	final Map<Method,Class<? extends InvocationHandler>> $handler = new HashMap<Method,Class<? extends InvocationHandler>>();
+	final Map<String,Class<? extends InvocationHandler>> $handler = new HashMap<String,Class<? extends InvocationHandler>>();
+	
+	public static String methodSignature(final Method $m) {
+		StringBuilder $builder = new StringBuilder($m.getName());
+		$builder.append("#");
+		for (Class<?> $class : $m.getParameterTypes()) {
+			$builder.append($class.getName());
+		}
+		return $builder.toString();
+	}
 	
 	Interface(final Schema $parent, final Class<?> $class) {
 		if ($class == null) {
@@ -44,7 +53,7 @@ public class Interface {
 		for (Class<?> $interface : $class.getInterfaces()) {
 			if (Mixin.class.isAssignableFrom($interface) && $interface.isAnnotationPresent(MixinHandler.class)) {
 				for (Method $m : $interface.getMethods()) {
-					$handler.put($m, $interface.getAnnotation(MixinHandler.class).value());
+					$handler.put(methodSignature($m), $interface.getAnnotation(MixinHandler.class).value());
 				}
 			}
 		}
@@ -127,11 +136,11 @@ public class Interface {
 	}
 
 	public boolean hasHandler(final Method $m) {
-		return $handler.containsKey($m);
+		return $handler.containsKey(methodSignature($m));
 	}
 	
 	public Class<? extends InvocationHandler> getHandler(final Method $m) {
-		return $handler.get($m);
+		return $handler.get(methodSignature($m));
 	}
 	
 	@Override
