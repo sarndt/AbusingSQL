@@ -11,8 +11,8 @@ import net.abusingjava.Version;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Author("Julian Fleischer")
-@Version("2011-08-13")
-@Target(ElementType.METHOD)
+@Version("2011-09-05")
+@Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface ToString {
-
+	
 }

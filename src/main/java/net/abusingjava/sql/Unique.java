@@ -1,8 +1,6 @@
 package net.abusingjava.sql;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.*;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
@@ -10,7 +8,8 @@ import net.abusingjava.Version;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Version("2011-09-06")
+@Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface Unique {
 	String value() default "";
 }

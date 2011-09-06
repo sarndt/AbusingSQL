@@ -12,7 +12,7 @@ import net.abusingjava.sql.*;
 import net.abusingjava.sql.schema.Schema;
 
 @Author("Julian Fleischer")
-@Version("2011-08-15")
+@Version("2011-09-06")
 public class DatabaseAccessImpl implements DatabaseAccess {
 
 	final ConnectionProvider $pool;
@@ -219,14 +219,4 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	public void close() {
 		$pool.close();
 	}
-
-	@Override
-	public <T extends ActiveRecord<?>> T create(final Class<T> $class, final int $id) {
-		@SuppressWarnings("unchecked")
-		T $instance = (T) Proxy.newProxyInstance($class.getClassLoader(), new Class<?>[] { $class },
-				new ActiveRecordUpdateHandler(this, $schema.getInterface($class)));
-		return $instance;
-	}
-
-
 }

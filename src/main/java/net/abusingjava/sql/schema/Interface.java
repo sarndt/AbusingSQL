@@ -36,13 +36,13 @@ public class Interface {
 		this.$simpleName = $class.getSimpleName();
 		this.$sqlName = DatabaseSQL.makeSQLName($simpleName);
 		
-		Map<String,Class<?>> $p = AbusingReflection.properties($class);
-		$p.remove("Id");
-		$properties = new Property[$p.size()];
+		Map<String,Class<?>> $propertiesMap = AbusingReflection.properties($class);
+		$propertiesMap.remove("Id");
+		$properties = new Property[$propertiesMap.size()];
 		int $i = 0;
 		Map<String,List<Property>> $keys = new HashMap<String,List<Property>>();
 		Property $toStringProperty = null;
-		for (String $key : $p.keySet()) {
+		for (String $key : $propertiesMap.keySet()) {
 			Property $property = new Property(this, $class, $key);
 			$properties[$i++] = $property;
 			if ($property.isUnique()) {
