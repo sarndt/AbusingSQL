@@ -28,6 +28,7 @@ public class Interface {
 	final Property $toStringProperty;
 	final Map<String,Class<? extends Mixin<?>>> $handler = new HashMap<String,Class<? extends Mixin<?>>>();
 	
+	
 	public static String methodSignature(final Method $m) {
 		StringBuilder $builder = new StringBuilder($m.getName());
 		$builder.append("#");
