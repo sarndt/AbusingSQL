@@ -13,6 +13,10 @@ import net.abusingjava.sql.schema.Schema;
 @Version("2011-09-05")
 public interface DatabaseAccess {
 
+	public final static int AND = 1;
+	public final static int OR = 1;
+	public final static int LIKE = 4;
+	
 	/**
 	 * Retrieves a Connection from the underlying ConnectionPool (or other kind
 	 * of Connection-Provider, depending on the Implementation).
@@ -110,11 +114,24 @@ public interface DatabaseAccess {
 	 * set.
 	 */
 	<T extends ActiveRecord<?>> T selectOne(Class<T> $class, String $query, Object... $values);
-
+	
 	/**
 	 * Returns the Schema-object that describes this particular Database.
 	 */
 	Schema getSchema();
+
+	/**
+	 * Performs a query based on the $example.
+	 * <p>
+	 * Equivalent to calling {@link #selectByExample(ActiveRecord, int)}
+	 * with <code>DatabaseAccess.AND | DatabaseAccess.LIKE</code> as $options.
+	 */
+	<T extends ActiveRecord<?>> RecordSet<T> selectByExample(ActiveRecord<T> $example);
+	
+	/**
+	 * Performs a query based on the $example with the given $options.
+	 */
+	<T extends ActiveRecord<?>> RecordSet<T> selectByExample(ActiveRecord<T> $example, int $options);
 
 	/**
 	 * Retrieves the Database-oddities specific to the current database.

@@ -97,12 +97,13 @@ public class ActiveRecordHandler implements InvocationHandler {
 		
 		if ($methodName == "getId") {
 			return $id;
-			
+
 		} else if ($methodName == "getPropertyChangeListeners") {
 			if ($propertyChangeSupport != null) {
 				return $propertyChangeSupport.getPropertyChangeListeners();
 			}
 			return new PropertyChangeListener[0];
+			
 		} else if ($methodName == "get") {
 			if ($newValues.containsKey($args[0])) {
 				return $newValues.get($args[0]);
@@ -407,6 +408,9 @@ public class ActiveRecordHandler implements InvocationHandler {
 				}
 			}
 			return $interface.getName() + '#' + $id;
+			
+		} else if ($methodName == "newValues") {
+			return Collections.unmodifiableMap($newValues);
 			
 		} else if ($methodName == "keys") {
 			Set<String> $keys = new HashSet<String>($oldValues.keySet());
