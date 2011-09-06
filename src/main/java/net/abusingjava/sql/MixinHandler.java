@@ -1,7 +1,6 @@
 package net.abusingjava.sql;
 
 import java.lang.annotation.*;
-import java.lang.reflect.InvocationHandler;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
@@ -13,6 +12,6 @@ import net.abusingjava.Version;
 @Target(ElementType.TYPE)
 public @interface MixinHandler {
 
-	Class<? extends InvocationHandler> value();
+	Class<? extends Mixin<?>> value();
 	
 }

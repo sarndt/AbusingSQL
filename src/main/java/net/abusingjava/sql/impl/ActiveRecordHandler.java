@@ -96,10 +96,16 @@ public class ActiveRecordHandler implements InvocationHandler {
 		String $methodName = $method.getName().intern();
 		
 		if (($interface != null) && $interface.hasHandler($method)) {
-			InvocationHandler $handler = $interface.getHandler($method).newInstance();
+			Mixin<? extends ActiveRecord<?>> $handler = $interface.getHandler($method).newInstance();
+			for (Method $m : $handler.getClass().getMethods()) {
+				if ($m.getName().equals("setActiveRecord")) {
+					$m.invoke($handler, $proxy);
+				}
+			}
+			$handler.setDatabaseAccess($dbAccess);
 			Object $result = $handler.getClass()
-				.getMethod("invoke", Object.class, Method.class, Object[].class)
-				.invoke($handler, $proxy, $method, $args);
+				.getMethod($method.getName(), $method.getParameterTypes())
+				.invoke($handler, $args);
 			return $result == null ? $proxy : $result;
 		}
 		

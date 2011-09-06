@@ -1,6 +1,5 @@
 package net.abusingjava.sql.schema;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
@@ -27,7 +26,7 @@ public class Interface {
 	final Schema $parent;
 	final Action $onDelete;
 	final Property $toStringProperty;
-	final Map<String,Class<? extends InvocationHandler>> $handler = new HashMap<String,Class<? extends InvocationHandler>>();
+	final Map<String,Class<? extends Mixin<?>>> $handler = new HashMap<String,Class<? extends Mixin<?>>>();
 	
 	public static String methodSignature(final Method $m) {
 		StringBuilder $builder = new StringBuilder($m.getName());
@@ -139,7 +138,7 @@ public class Interface {
 		return $handler.containsKey(methodSignature($m));
 	}
 	
-	public Class<? extends InvocationHandler> getHandler(final Method $m) {
+	public Class<? extends Mixin<?>> getHandler(final Method $m) {
 		return $handler.get(methodSignature($m));
 	}
 	
