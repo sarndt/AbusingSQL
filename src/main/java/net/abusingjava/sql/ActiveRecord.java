@@ -89,4 +89,9 @@ public interface ActiveRecord<T> extends SupportsPropertyChangeEvents {
 	 * Retrieves a Map of all values which are newly set on this object.
 	 */
 	Map<String,Object> newValues();
+	
+	/**
+	 * Returns the DatabaseAccess that this ActiveRecord is u
+	 */
+	DatabaseAccess databaseAccess();
 }

@@ -1,5 +1,7 @@
 package net.abusingjava.sql.schema;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -7,6 +9,8 @@ import net.abusingjava.AbusingReflection;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.Action;
+import net.abusingjava.sql.Mixin;
+import net.abusingjava.sql.MixinHandler;
 import net.abusingjava.sql.OnDelete;
 import net.abusingjava.sql.impl.DatabaseSQL;
 
@@ -23,6 +27,7 @@ public class Interface {
 	final Schema $parent;
 	final Action $onDelete;
 	final Property $toStringProperty;
+	final Map<Method,Class<? extends InvocationHandler>> $handler = new HashMap<Method,Class<? extends InvocationHandler>>();
 	
 	Interface(final Schema $parent, final Class<?> $class) {
 		if ($class == null) {
@@ -35,6 +40,14 @@ public class Interface {
 		this.$name = $class.getCanonicalName();
 		this.$simpleName = $class.getSimpleName();
 		this.$sqlName = DatabaseSQL.makeSQLName($simpleName);
+		
+		for (Class<?> $interface : $class.getInterfaces()) {
+			if (Mixin.class.isAssignableFrom($interface) && $interface.isAnnotationPresent(MixinHandler.class)) {
+				for (Method $m : $interface.getMethods()) {
+					$handler.put($m, $interface.getAnnotation(MixinHandler.class).value());
+				}
+			}
+		}
 		
 		Map<String,Class<?>> $propertiesMap = AbusingReflection.properties($class);
 		$propertiesMap.remove("Id");
@@ -113,6 +126,14 @@ public class Interface {
 		return $interface;
 	}
 
+	public boolean hasHandler(final Method $m) {
+		return $handler.containsKey($m);
+	}
+	
+	public Class<? extends InvocationHandler> getHandler(final Method $m) {
+		return $handler.get($m);
+	}
+	
 	@Override
 	public boolean equals(final Object $o) {
 		if ($o instanceof Interface) {
@@ -120,6 +141,7 @@ public class Interface {
 		}
 		return false;
 	}
+	
 	
 	@Override
 	public int hashCode() {

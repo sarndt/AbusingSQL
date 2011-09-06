@@ -95,6 +95,14 @@ public class ActiveRecordHandler implements InvocationHandler {
 		}
 		String $methodName = $method.getName().intern();
 		
+		if (($interface != null) && $interface.hasHandler($method)) {
+			InvocationHandler $handler = $interface.getHandler($method).newInstance();
+			Object $result = $handler.getClass()
+				.getMethod("invoke", Object.class, Method.class, Object[].class)
+				.invoke($handler, $proxy, $method, $args);
+			return $result == null ? $proxy : $result;
+		}
+		
 		if ($methodName == "getId") {
 			return $id;
 
@@ -408,6 +416,9 @@ public class ActiveRecordHandler implements InvocationHandler {
 				}
 			}
 			return $interface.getName() + '#' + $id;
+			
+		} else if ($methodName == "databaseAccess") {
+			return $dbAccess;
 			
 		} else if ($methodName == "newValues") {
 			return Collections.unmodifiableMap($newValues);
