@@ -28,7 +28,7 @@ import net.abusingjava.sql.schema.Property;
  * Implements an ActiveRecord at Runtime.
  */
 @Author("Julian Fleischer")
-@Version("2011-09-06")
+@Version("2011-09-09")
 public class ActiveRecordHandler implements InvocationHandler {
 
 	private final DatabaseAccess $dbAccess;
@@ -71,10 +71,22 @@ public class ActiveRecordHandler implements InvocationHandler {
 		}
 		$id = $resultSet.getInt("id");
 	}
+
+	ActiveRecordHandler(final DatabaseAccess $dbAccess, final Interface $interface) {
+		this.$dbAccess = $dbAccess;
+		this.$interface = $interface;
+
+		for (Property $p : $interface.getProperties()) {
+			if ($p.getEnumType() != null) {
+				$oldValues.put($p.getSqlName(),
+						AbusingFunctions.callback(this, "makeEnumSet").call($p.getEnumType(), ""));
+			}
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	public <E extends Enum<E>> EnumSet<E> makeEnumSet(final Class<E> $enumType, final String $values) {
-		String[] $parts = $values.split(",");
+		String[] $parts = (($values == null) || $values.isEmpty()) ? new String[0] : $values.split(",");
 		EnumSet<E> $set = EnumSet.noneOf($enumType);
 		for (String $part : $parts) {
 			$set.add((E) callback(Enum.class, "valueOf").call($enumType, $part));
@@ -82,11 +94,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 		return $set;
 	}
 
-	ActiveRecordHandler(final DatabaseAccess $dbAccess, final Interface $interface) {
-		this.$dbAccess = $dbAccess;
-		this.$interface = $interface;
-	}
-	
 	@Override
 	public Object invoke(final Object $proxy, final Method $method, Object[] $args) throws Throwable {
 

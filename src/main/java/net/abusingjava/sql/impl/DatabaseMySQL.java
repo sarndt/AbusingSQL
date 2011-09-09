@@ -18,7 +18,7 @@ import net.abusingjava.sql.DatabaseException;
 import net.abusingjava.sql.schema.*;
 
 @Author("Julian Fleischer")
-@Version("2011-08-15")
+@Version("2011-09-09")
 @Since("1.0")
 public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 
