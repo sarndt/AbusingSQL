@@ -94,6 +94,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 				return $recordSet;
 			} catch (SQLException $exc) {
 				throw $exc;
+			} catch (IllegalArgumentException $exc) {
+				throw new RuntimeException(String.format("The class is %d", $class), $exc);
 			} finally {
 				$pool.release($c);
 			}
