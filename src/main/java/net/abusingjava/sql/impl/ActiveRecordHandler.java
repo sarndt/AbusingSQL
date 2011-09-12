@@ -60,8 +60,12 @@ public class ActiveRecordHandler implements InvocationHandler {
 		for (Property $p : $interface.getProperties()) {
 			try {
 				if ($p.getEnumType() != null) {
+					String $string = $resultSet.getString($p.getSqlName());
+					if ($string == null) {
+						$string = "";
+					}
 					$oldValues.put($p.getSqlName(),
-						AbusingFunctions.callback(this, "makeEnumSet").call($p.getEnumType(), $resultSet.getString($p.getSqlName())));
+						AbusingFunctions.callback(this, "makeEnumSet").call($p.getEnumType(), $string));
 				} else {
 					$oldValues.put($p.getSqlName(),
 						$dbAccess.getDatabaseExtravaganza().get($resultSet, $p.getSqlName(), $p.getJavaType()));
