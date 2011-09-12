@@ -16,8 +16,6 @@ import net.abusingjava.sql.DatabaseException;
 import net.abusingjava.sql.RecordSet;
 import net.abusingjava.sql.schema.Interface;
 
-import org.jdesktop.observablecollections.ObservableListListener;
-
 @Author("Julian Fleischer")
 @Version("2011-08-15")
 public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> implements RecordSet<T> {
@@ -99,33 +97,6 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	@Override
 	public PropertyChangeListener[] getPropertyChangeListeners() {
 		return $propertyChangeSupport.getPropertyChangeListeners();
-	}
-
-	@Override
-	public void addObservableListListener(final ObservableListListener listener) {
-		
-	}
-
-	@Override
-	public void removeObservableListListener(final ObservableListListener listener) {
-		
-	}
-
-	private boolean $supportsElementPropertyChanged = false;
-	
-	@Override
-	public boolean supportsElementPropertyChanged() {
-		return $supportsElementPropertyChanged;
-	}
-
-	@Override
-	public void installPropertyChangeListeners() {
-		if (!$supportsElementPropertyChanged) {
-			//for (ActiveRecord<?> $record : this) {
-				// $record.addPropertyChangeListener(...)
-			// }
-			$supportsElementPropertyChanged = true;
-		}
 	}
 
 }

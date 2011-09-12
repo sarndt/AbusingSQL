@@ -29,11 +29,6 @@
 			<artifactId>AbusingJava</artifactId>
 			<version>1.0-alpha-1</version>
 		</dependency>
-		<dependency>
-    		<groupId>net.java.dev.beansbinding</groupId>
-    		<artifactId>beansbinding</artifactId>
-    		<version>1.2.1</version>
-		</dependency>
 		<!-- <dependency>
   			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>

@@ -12,8 +12,6 @@ import net.abusingjava.sql.ActiveRecord;
 import net.abusingjava.sql.DatabaseAccess;
 import net.abusingjava.sql.RecordSet;
 
-import org.jdesktop.observablecollections.ObservableListListener;
-
 @Author("Julian Fleischer")
 @Version("2011-08-17")
 public class ObjectRecordSet extends LinkedList<ActiveRecord<?>> implements RecordSet<ActiveRecord<?>> {
@@ -62,26 +60,6 @@ public class ObjectRecordSet extends LinkedList<ActiveRecord<?>> implements Reco
 	@Override
 	public PropertyChangeListener[] getPropertyChangeListeners() {
 		return null;
-	}
-
-	@Override
-	public void addObservableListListener(final ObservableListListener listener) {
-		
-	}
-
-	@Override
-	public void removeObservableListListener(final ObservableListListener listener) {
-		
-	}
-
-	@Override
-	public boolean supportsElementPropertyChanged() {
-		return false;
-	}
-
-	@Override
-	public void installPropertyChangeListeners() {
-		
 	}
 
 }
