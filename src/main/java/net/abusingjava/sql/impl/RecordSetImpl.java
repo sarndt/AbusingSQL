@@ -30,6 +30,9 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	
 	RecordSetImpl(final DatabaseAccess $dbAccess, final ResultSet $result, final Interface $interface) throws SQLException {
 		this.$dbAccess = $dbAccess;
+		if ($interface == null) {
+			throw new IllegalArgumentException("$interface may not be null");
+		}
 		if ($result != null) {
 			while ($result.next()) {
 				@SuppressWarnings("unchecked")
