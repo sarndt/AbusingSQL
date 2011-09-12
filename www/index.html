@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /></head>
+	<title>AbusingSwing (1.0-SNAPSHOT, 2011-08-26)</title>
+	<script type="text/javascript" src="shCore.js"></script>
+	<script type="text/javascript" src="shBrushJava.js"></script>
+	<script type="text/javascript" src="shBrushBash.js"></script>
+	<script type="text/javascript" src="shBrushXML.js"></script>
+	<link type="text/css" rel="stylesheet" href="shCoreDefault.css"/>
+	<link type="text/css" rel="stylesheet" href="style.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+
+<body style="background: white; font-family: Helvetica, Arial" id="spec">
+
+<h1>AbusingSQL <small>(1.0-SNAPSHOT, 2011-09-09)</small></h1>
+
+<h2>About</h2>
+
+<p>AbusingSQL is a tiny library for easily accessing SQL-Databases. Currently it works with MySQL only, but support for PostgreSQL is under development and will be included in the first stable release (v1.0).</p>
+
+<h2>Install</h2>
+
+<h3>Checkout Git Repository</h3>
+
+Since there is no stable version of AbusingSwing yet, there is no final version uploaded to a Maven repository yet. Thus you have to checkout AbusingSwing and AbusingJava and install them into you local maven repository (<a href="http://www.AbusingJava.net/Library">AbusingJava</a> is a dependency).
+
+<pre class="brush: bash;">
+git clone git://github.com/scravy/AbusingSwing.git AbusingJava
+cd AbusingJava
+mvn install
+cd ..
+git clone git://github.com/scravy/AbusingSwing.git AbusingSwing
+cd AbusingSwing
+mvn install
+</pre>
+
+<h3>Add Maven Dependency to your Maven project</h3>
+
+<pre class="brush: xml;">
+&lt;dependency&gt;
+	&lt;groupId&gt;net.abusingjava&lt;/groupId&gt;
+	&lt;artifactId&gt;AbusingSwing&lt;/artifactId&gt;
+	&lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+</pre>
+
+<h2>First steps</h2>
+
+<p>Save the following as <code>MyFirstAbusingSwingWindow.xml</code>:</p>
+<pre class="brush: xml;">
+&lt;window min-width="300" min-height="200" width="600" height="400"&gt;
+	&lt;panel&gt;
+	    &lt;box&gt;
+	        &lt;label
+	        	x="50%" y="50%" width="200px" height="50px"
+	        	font-size="30px"&gt;Hello World!&lt;/label&gt;
+	    &lt;/box&gt;
+	&lt;/panel&gt;
+&lt;/window&gt;
+</pre>
+
+<p>Save this as <code>MyFirstAbusingSwingWindow.java</code>:</p>
+<pre class="brush: java;">
+import net.abusingjava.xml.AbusingXML;
+
+public static class MyFirstAbusingSwingWindow {
+	public static void main(String... $args) {
+		AbusingSwing.showWindow("MyFirstAbusingSwingWindow.xml");
+	}
+}
+</pre>
+
+<p>Compile and run!</p>
+<pre class="brush: bash;">
+javac MyFirstAbusingSwingWindow.java
+java MyFirstAbusingSwingWindow
+</pre>
+
+
+<h2>The Magic Panel</h2>
+
+<h3>Creating a MagicPanel</h3>
+
+<pre class="brush: java;">
+import net.abusingjava.AbusingSwing.*;
+
+public class MyMagicPanel extends MagicPanel {
+	public MyMagicPanel() {
+		super(getClass().getResourceAsStream("MyMagicPanel.xml"));
+	}
+	
+	public void eventHandler1() {
+		System.out.println("Button clicked");
+	}
+}
+</pre>
+
+<pre class="brush: xml;">
+&lt;panel&gt;
+	&lt;!-- Every panel contains a single box, vbox, or hbox --&gt;
+	&lt;vbox&gt;
+		&lt;!-- In this panel there is a simple button, scaled to the full size of the panel.
+		     Also via "onaction" the function "eventHandler1" is registered as an ActionListener --&gt;
+		&lt;button
+			width="*"
+			height="*"
+			onaction="eventHandler1"&gt;Push the Button&lt;/button&gt;
+	&lt;/vbox&gt;
+&lt;/panel&gt;
+</pre>
+
+
+<h3>Stylesheets</h3>
+
+<p>A similar mechanism like CSS Stylesheets in HTML can be used in the XML definition of MagicPanel:</p>
+
+<pre class="brush: xml;">
+&lt;panel&gt;
+	&lt;style&gt;
+		&lt;rule match="textfield, button" background="black" foreground="white" /&gt;
+	&lt;/style&gt;
+	&lt;vbox&gt;
+		&lt;textfield /&gt;
+		&lt;button /&gt;
+		&lt;button /&gt;
+	&lt;/vbox&gt;
+&lt;/panel&gt;
+</pre>
+
+<p>The above definition will cause the textfield and the two buttons in the panel to get a black background and a white foreground.</p>
+
+
+<h3>The $-selector</h3>
+
+<p>Similar to the selector (match) in Style-Rules, you can programmatically select multiple components from a MagicPanel.
+One handy feature of this mechanism is, that you can apply a method on a collection of itmes:</p>
+
+<pre class="brush: java;">
+myMagicPanel.$("*").disable();
+</pre>
+
+
+<h3>Actions &amp; Events</h3>
+
+<p>The following Event can be connected with any component: <code>onaction</code>, <code>onmouseover</code>, <code>onmouseout</code>,
+<code>onmousemove</code>, <code>onclick</code>, <code>onkeypress</code>, <code>onkeydown</code>, <code>onkeyup</code>, <code>onfocus</code>,
+<code>onblur</code>, <code>onmousewheel</code>. Tabs additionally offer <code>onclose</code> (if they are closeable).</p>
+
+
+<h2>API Reference</h2>
+
+
+<h2>XML Reference</h2>
+
+<h3>Common attributes</h3>
+
+<table>
+	<tr>
+		<td>height</td>
+		<td>The height of the component.</td>
+	</tr>
+	<tr>
+		<td>width</td>
+		<td>The width of the component.</td>
+	</tr>
+	<tr>
+		<td>min-height</td>
+		<td><i>Only applies to Components within a VBox or HBox that has intrinsic dimensions.</i></td>
+	</tr>
+	<tr>
+		<td>min-width</td>
+		<td><i>Only applies to Components within a VBox or HBox that has intrinsic dimensions.</i></td>
+	</tr>
+	<tr>
+		<td>top</td>
+		<td><i>Only applies to Components within a Box (neither VBox nor HBox, a fixed box).</i></td>
+	</tr>
+	<tr>
+		<td>left</td>
+		<td><i>Only applies to Components within a Box (neither VBox nor HBox, a fixed box).</i></td>
+	</tr>
+	<tr>
+		<td>foreground</td>
+		<td>The <span style="color: fuchsia;">foreground</span> color (the color used for the text).</td>
+	</tr>
+	<tr>
+		<td>background</td>
+		<td>The <span style="background: yellow;">background</span> color.</td>
+	</tr>
+	<tr>
+		<td>font-style</td>
+		<td>The <i>styling</i> of the font, <code>italic</code> or <code>normal</code>.</td>
+	</tr>
+	<tr>
+		<td>font-weight</td>
+		<td>The <b>weight</b> of the font, <code>bold</code> or <code>normal</code>.</td>
+	</tr>
+</table>
+
+<h3>Root Container</h3>
+
+<h4>&lt;panel></h4>
+
+<h4>&lt;window></h4>
+
+<table>
+	<tr>
+		<td>height</td>
+		<td>The initial height of the window.</td>
+	</tr>
+	<tr>
+		<td>width</td>
+		<td>The initial width of the window.</td>
+	</tr>
+	<tr>
+		<td>min-height</td>
+		<td>The minimum height to be always kept.</td>
+	</tr>
+	<tr>
+		<td>min-width</td>
+		<td>The minimum width to be always kept.</td>
+	</tr>
+</table>
+
+<h3>Window elements</h3>
+
+<h4>&lt;menu-bar></h4>
+
+<h4>&lt;item></h4>
+
+<h4>&lt;menu></h4>
+
+
+<h3>Container</h3>
+
+<h4>&lt;box></h4>
+
+<h4>&lt;hbox></h4>
+
+<h4>&lt;vbox></h4>
+
+
+<h3>“Half container, half component”</h3>
+
+<p>The components mentioned in this section are called “half containers” since on the one hand they can contain other elements,
+on the other hand they can not be used in places where an hbox, vbox, or box could be (they are ordinary components);
+in other words: you have to surround them with a vbox or box if you want to use them:</p>
+
+<pre class="brush: xml;">
+&lt;panel&gt;
+	&lt;hbox&gt;&lt;!-- important! --&gt;
+		&lt;tabs&gt;
+			&lt;tab title="A Tab"&gt;
+				&lt;hbox&gt;&lt;panel&gt;hbox inside&lt;/panel&gt;&lt;/hbox&gt;
+			&lt;/tab&gt;
+			&lt;tab title="Another Tab"&gt;
+				&lt;vbox&gt;&lt;panel&gt;vbox inside&lt;/panel&gt;&lt;/vbox&gt;
+			&lt;/tab&gt;
+		&lt;/tabs&gt;
+	&lt;/hbox&gt;
+&lt;/panel&gt;
+</pre>
+
+<p>The components in this sections are typically being used to tidy up complex layouts.</p>
+
+<h4>&lt;cards></h4>
+
+<h4>&lt;panes></h4>
+
+<h4>&lt;tabs></h4>
+
+<h5>Sample</h5>
+
+<pre class="brush: xml;">
+&lt;tabs&gt;
+	&lt;tab title="First tab"&gt;
+		&lt;vbox&gt;
+			&lt;button&gt;A Button&lt;/button&gt;
+			&lt;button&gt;Another button&lt;/button&gt;
+		&lt;/vbox&gt;
+	&lt;/tab&gt;
+	&lt;tab title="Second tab"&gt;
+		&lt;hbox&gt;
+			&lt;label&gt;Here there is an HBox&lt;/label&gt;
+		&lt;/hbox&gt;
+	&lt;/tab&gt;
+	&lt;tab title="Third tab"&gt;
+		&lt;hbox&gt;
+			&lt;table name="table1"&gt;
+				&lt;col&gt;First&lt;/col&gt;
+				&lt;col&gt;Second&lt;/col&gt;
+			&lt;/table&gt;
+			&lt;list name="list1" /&gt;
+		&lt;/hbox&gt;
+	&lt;/tab&gt;
+&lt;/tabs&gt;
+</pre>
+
+<h4>&lt;hsplit> <span class="experimental">experimental</span></h4>
+
+<p>Under the hood, tables are realized using a
+	<a href="doc/SwingX-1.6.3/org/jdesktop/swingx/JXMultiSplitPane.html"><code>JXMultiSplitPane</code></a>.</p>
+
+<p class="note">Currenty, split-components are realized using a JSplitPane, which does not scale properly. Also, components within a  split-component are not properly registered with the MagicPane, thus filtering and accessing the UI programmatically does not work.</p>
+
+
+<h4>&lt;vsplit> <span class="experimental">experimental</span></h4>
+
+<p>Under the hood, tables are realized using a
+	<a href="doc/SwingX-1.6.3/org/jdesktop/swingx/JXMultiSplitPane.html"><code>JXMultiSplitPane</code></a>.</p>
+
+<p class="note">Currenty, split-components are realized using a JSplitPane, which does not scale properly. Also, components within a  split-component are not properly registered with the MagicPane, thus filtering and accessing the UI programmatically does not work.</p>
+
+
+
+<h3>Components</h3>
+
+<h4>&lt;any></h4>
+
+<pre class="brush: xml;">
+<any class="javax.swing.DesktopPane" name="desktopPane" />
+</pre>
+
+<p><b>Programmatic access:</b></p>
+<pre class="brush: java;">
+$myMagicPanel.$("#desktopPane").as(JDesktopPane.class);
+</pre>
+
+
+<h4>&lt;button></h4>
+
+
+<h4>&lt;checkbox></h4>
+
+<h4>&lt;combobox></h4>
+
+<table>
+	<tr>
+		<th>Attribute</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>auto-complete</td>
+		<td><code>boolean</code></td>
+		<td><code>false</code></td>
+		<td>Enable auto completion for this combobox.</td>
+	</tr>
+	<tr>
+		<td>from</td>
+		<td><code>JavaType</code></td>
+		<td>-</td>
+		<td>An enum-class to fill in values from.</td>
+	</tr>
+</table>
+
+
+<h4>&lt;datepicker></h4>
+
+<p>Under the hood, datepickers are realized using a
+	<a href="doc/SwingX-1.6.3/org/jdesktop/swingx/JXDatePicker.html"><code>JXDatePicker</code></a>.</p>
+
+
+<h4>&lt;label></h4>
+
+<p>Under the hood, labels are realized using a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JLabel.html"><code>JLabel</code></a>.</p>
+
+
+<h4>&lt;list></h4>
+
+<p>Under the hood, lists are realized using a
+	<a href="doc/SwingX-1.6.3/org/jdesktop/swingx/JXList.html"><code>JXList</code></a> with a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/DefaultListModel.html"><code>DefaultListModel</code></a>.</p>
+
+
+<h4>&lt;multilist></h4>
+
+<p>Under the hood, multilists are realized using a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JTable.html"><code>JTable</code></a> with 2 columns,
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JCheckBox.html"><code>JCheckBox</code>es</a> in the first.</p>
+
+
+<h4>&lt;numeric></h4>
+
+<p>Under the hood, numerics are realized using a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JSpinner.html"><code>JSpinner</code></a> with a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/SpinnerNumberModel.html"><code>SpinnerNumberModel</code></a>.
+
+
+<h4>&lt;password></h4>
+
+<h4>&lt;progressbar></h4>
+
+<p>Under the hood, progressbars are realized using a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JTextArea.html"><code>JProgressBar</code></a>.</p>
+
+
+<h4>&lt;slider></h4>
+
+<p>Under the hood, sliders are realized using a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JTextArea.html"><code>JSlider</code></a>.</p>
+
+<h4>&lt;table></h4>
+
+<p>Under the hood, tables are realized using a
+	<a href="doc/SwingX-1.6.3/org/jdesktop/swingx/JXTable.html"><code>JXTable</code></a>.</p>
+
+<table>
+	<tr>
+		<th>Attribute</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>sortable</td>
+		<td><code>boolean</code></td>
+		<td><code>true</code></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>editable</td>
+		<td><code>boolean</code></td>
+		<td><code>false</code></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>grid-color</td>
+		<td><code>Color</code></td>
+		<td>-</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>column-control-visible</td>
+		<td><code>boolean</code></td>
+		<td><code>true</code></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>horizontal-scroll-enabled</td>
+		<td><code>boolean</code></td>
+		<td><code>false</code></td>
+		<td>If true, columns can be dragged to a width that large, that a horizontal scrollbar will appear.</td>
+	</tr>
+	<tr>
+		<td>column-margin</td>
+		<td><code>Value</code></td>
+		<td>-</td>
+		<td><i>Only pixels are supported</i></td>
+	</tr>
+	<tr>
+		<td>sorts-on-update</td>
+		<td><code>boolean</code></td>
+		<td><code>true</code></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>row-height</td>
+		<td><code>Value</code></td>
+		<td>-</td>
+		<td><i>Only pixels are supported</i></td>
+	</tr>
+	<tr>
+		<td>filter-mode</td>
+		<td>“<code>and</code>” or “<code>or</code>”</td>
+		<td><code>and</code></td>
+		<td></td>
+	</tr>
+</table>
+
+<h5>Columns: &lt;col></h5>
+
+<table>
+	<tr>
+		<th>Attribute</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>type</td>
+		<td><code>JavaType</code></td>
+		<td><code>java.lang.Object</code></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>min-width</td>
+		<td><code>Value</code></td>
+		<td></td>
+		<td><i>Only pixels are supported</i></td>
+	</tr>
+	<tr>
+		<td>max-width</td>
+		<td><code>Value</code></td>
+		<td></td>
+		<td><i>Only pixels are supported</i></td>
+	</tr>
+	<tr>
+		<td>width</td>
+		<td><code>Value</code></td>
+		<td></td>
+		<td><i>Only pixels are supported</i></td>
+	</tr>
+</table>
+
+<h5>Sample</h5>
+
+<pre class="brush: xml;">
+&lt;table column-control-visible="true" name="table" grid-color="cccccc"&gt;
+	&lt;col type="string" min-width="100px"&gt;First name&lt;/col&gt;
+	&lt;col type="string" min-width="100px"&gt;Last name&lt;/col&gt;
+	&lt;col type="int" min-width="50px" max-width="100px"&gt;Alter&lt;/col&gt;
+&lt;/table&gt;
+</pre>
+
+
+<h4>&lt;textarea></h4>
+
+<p>Under the hood, textareas are realized using a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JTextArea.html"><code>JTextArea</code></a>.</p>
+
+
+
+<h4>&lt;textfield></h4>
+
+<p>Under the hood, textfields are realized using a
+	<a href="http://download.oracle.com/javase/6/docs/api/javax/swing/JTextField.html"><code>JTextField</code></a>.</p>
+
+<h4>&lt;tree> <span class="experimental">experimental</span></h4>
+
+<p>Under the hood, trees are realized using a
+	<a href="doc/SwingX-1.6.3/org/jdesktop/swingx/JXTree.html"><code>JXTree</code></a>.</p>
+
+
+</body>
+
+</html>

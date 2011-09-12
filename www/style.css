@@ -1,0 +1,11 @@
+body { background: white; color: black; font-family: Helvetica, Arial; }
+h2 { border-bottom: 1px solid silver; }
+h1 small { font-size: 0.77em; color: silver; }
+.syntaxhighlighter { overflow-y: hidden !important; }
+table { border-collapse: collapse; border: none; }
+th { padding: .4em; border-bottom: 1px solid black; }
+td { padding: .4em; font-family: "Courier", monospace; }
+td + td { border-left: 1px solid silver; font-family: inherit; }
+tr + tr td { border-top: 1px solid silver; }
+.experimental { color: maroon; font-variant: small-caps; }
+.note:before { content: "Note: "; color: red; }
