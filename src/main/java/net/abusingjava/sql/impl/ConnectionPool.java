@@ -21,6 +21,7 @@ public class ConnectionPool implements ConnectionProvider {
 
 	final private ArrayList<ConnectionObject> $connections;
 	final private int $poolsize;
+	final private int $loginTimeout;
 	
 	final private String $url;
 	final private String $user;
@@ -62,7 +63,8 @@ public class ConnectionPool implements ConnectionProvider {
 		long $timestamp;
 		boolean $inUse = false;
 		
-		ConnectionObject() throws SQLException {
+		ConnectionObject(final int $timeout) throws SQLException {
+			DriverManager.setLoginTimeout($timeout);
 			$connection = DriverManager.getConnection($url, $user, $password);
 		}
 		
@@ -97,18 +99,20 @@ public class ConnectionPool implements ConnectionProvider {
 	 * @param $user Der für die Datenbank zu benutzende Nutzername.
 	 * @param $password Das Passwort zur Datenbank.
 	 * @param $poolsize Die Anzahl der in Vorbereitung zu haltenden Verbindungen.
+	 * @param $loginTimeout
 	 * @param $reaperDelay Das Interval (in Millisekunden) in dem der Connection-Reaper alte Verbindungen entsorgt.
 	 * @param $reaperTimeout Die Anzahl Millisekunden die eine Verbindung nicht mehr genutzt sein muss, damit der Reaper sie entsorgt.
 	 * @param $connectionTimeout Die Anzahl der Millisekunden die eine Verbindung Zeit hat einen erfolgreichen ping zu senden, bevor sie als invalid angesehen wird und erneuert würde.
 	 * @throws ClassNotFoundException Wenn die durch $driverClassName angegebene Klasse nicht gefunden wurde.
 	 * @throws SQLException Wenn es Fehler beim Erstellen der Verbindungen gab.
 	 */
-	public ConnectionPool(final String $driverClassName, final String $url, final String $user, final String $password, final int $poolsize, final int $reaperDelay, final int $reaperTimeout, final int $connectionTimeout)
+	public ConnectionPool(final String $driverClassName, final String $url, final String $user, final String $password, final int $poolsize, final int $loginTimeout, final int $reaperDelay, final int $reaperTimeout, final int $connectionTimeout)
 			throws ClassNotFoundException, SQLException {
 		this.$url = $url;
 		this.$user = $user;
 		this.$password = $password;
 		this.$poolsize = $poolsize;
+		this.$loginTimeout = $loginTimeout;
 		this.$reaperDelay = $reaperDelay;
 		this.$connectionTimeout = $connectionTimeout;
 		this.$reaperTimeout = $reaperTimeout;
@@ -117,7 +121,7 @@ public class ConnectionPool implements ConnectionProvider {
 		Class.forName($driverClassName);
 		
 		for (int $i = 0; $i < $poolsize; $i++) {
-			$connections.add(new ConnectionObject());
+			$connections.add(new ConnectionObject($loginTimeout));
 		}
 		
 		Thread $reaper = new Thread(new ConnectionReaper());
@@ -144,7 +148,7 @@ public class ConnectionPool implements ConnectionProvider {
 			}
 			for (int $i = 0; $i < ($poolsize - $connections.size()); $i++) {
 				try {
-					$connections.add(new ConnectionObject());
+					$connections.add(new ConnectionObject($loginTimeout));
 				} catch (SQLException $exc) {}
 			}
 		}
@@ -158,7 +162,7 @@ public class ConnectionPool implements ConnectionProvider {
 					return $o.$connection;
 				}
 			}
-			ConnectionObject $o = new ConnectionObject();
+			ConnectionObject $o = new ConnectionObject($loginTimeout);
 			$connections.add($o);
 			return $o.$connection;
 		}

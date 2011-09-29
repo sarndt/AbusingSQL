@@ -12,6 +12,11 @@ public interface DatabaseAccessFactory {
 	 * Sets the number of cached connections if the database-access-object uses connection pooling.
 	 */
 	void setPoolsize(final int $size);
+	
+	/**
+	 * Sets the maximum number of seconds to wait for a connection to be opened.
+	 */
+	void setLoginTimeout(final int $seconds);
 
 	/**
 	 * Create a new DatabaseAccess-object with the given credentials.

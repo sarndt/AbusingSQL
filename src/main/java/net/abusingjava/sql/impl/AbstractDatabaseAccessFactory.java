@@ -15,6 +15,7 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	int $reaperTimeout = 30000;
 	int $connectionTimeout = 1000;
 	int $poolsize = 2;
+	int $loginTimeout = 60;
 	
 	protected final Schema $schema;
 	private final DatabaseExtravaganza $extravaganza;
@@ -42,6 +43,11 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	}
 	
 	@Override
+	public void setLoginTimeout(final int $seconds) {
+		$loginTimeout = $seconds;
+	}
+	
+	@Override
 	public Schema getSchema() {
 		return $schema;
 	}
@@ -50,7 +56,7 @@ public abstract class AbstractDatabaseAccessFactory implements DatabaseAccessFac
 	public DatabaseAccess newDatabaseAccess(final String $url, final String $user, final String $password) {
 		try {
 			ConnectionProvider $pool = new ConnectionPool($extravaganza.getDriverName(),
-					$url, $user, $password, $poolsize, $reaperDelay, $reaperTimeout, $connectionTimeout);
+					$url, $user, $password, $poolsize, $loginTimeout, $reaperDelay, $reaperTimeout, $connectionTimeout);
 			return new DatabaseAccessImpl($extravaganza, $pool, $schema);
 		} catch (SQLException $exc) {
 			throw new DatabaseException($exc);
