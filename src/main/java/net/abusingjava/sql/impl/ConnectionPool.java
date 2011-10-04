@@ -99,7 +99,7 @@ public class ConnectionPool implements ConnectionProvider {
 	 * @param $user Der für die Datenbank zu benutzende Nutzername.
 	 * @param $password Das Passwort zur Datenbank.
 	 * @param $poolsize Die Anzahl der in Vorbereitung zu haltenden Verbindungen.
-	 * @param $loginTimeout
+	 * @param $loginTimeout The number of seconds until a connection attempt should fail.
 	 * @param $reaperDelay Das Interval (in Millisekunden) in dem der Connection-Reaper alte Verbindungen entsorgt.
 	 * @param $reaperTimeout Die Anzahl Millisekunden die eine Verbindung nicht mehr genutzt sein muss, damit der Reaper sie entsorgt.
 	 * @param $connectionTimeout Die Anzahl der Millisekunden die eine Verbindung Zeit hat einen erfolgreichen ping zu senden, bevor sie als invalid angesehen wird und erneuert würde.
