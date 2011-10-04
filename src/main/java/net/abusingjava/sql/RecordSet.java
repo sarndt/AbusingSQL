@@ -7,6 +7,8 @@ public interface RecordSet<T extends ActiveRecord<?>> extends SetList<T>, Suppor
 	void saveChanges();
 	
 	void discardChanges();
+	
+	boolean hasChanges();
 
 	void deleteAll();
 }

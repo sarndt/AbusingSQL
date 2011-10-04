@@ -25,7 +25,6 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	final private DatabaseAccess $dbAccess;
 	final private PropertyChangeSupport $propertyChangeSupport = new PropertyChangeSupport(this);
 	
-	
 	RecordSetImpl(final DatabaseAccess $dbAccess, final ResultSet $result, final Interface $interface) throws SQLException {
 		this.$dbAccess = $dbAccess;
 		if ($result != null) {
@@ -63,8 +62,22 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	}
 	
 	@Override
+	public boolean hasChanges() {
+		for (T $obj : this) {
+			if ($obj.hasChanges()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public void discardChanges() {
-		
+		for (T $obj : this) {
+			if ($obj.hasChanges()) {
+				$obj.discardChanges();
+			}
+		}
 	}
 	
 	@Override

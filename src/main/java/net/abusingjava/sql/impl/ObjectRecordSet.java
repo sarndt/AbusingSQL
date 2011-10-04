@@ -43,6 +43,11 @@ public class ObjectRecordSet extends LinkedList<ActiveRecord<?>> implements Reco
 	}
 
 	@Override
+	public boolean hasChanges() {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
 	public void deleteAll() {
 		throw new UnsupportedOperationException();
 	}

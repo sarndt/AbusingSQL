@@ -27,4 +27,27 @@ final public class DatabaseSQL {
 		}
 		return $builder.toString();
 	}
+	
+	public static String makeJaveName(final String $name) {
+		StringBuilder $builder = new StringBuilder();
+		boolean $convertToUpperCase = false;
+		for (int $i = 0; $i < $name.length(); $i++) {
+			char $char = $name.charAt($i);
+			
+			if ($char == '_') {
+				$convertToUpperCase = true;
+			} else {
+				if ($convertToUpperCase) {
+					$char = Character.toUpperCase($char);
+					$convertToUpperCase = false;
+				}
+				$builder.append($char);
+			}
+		}
+		return $builder.toString();
+	}
+	
+	public static void main(final String... $args) {
+		System.out.println(makeJaveName("login_name"));
+	}
 }

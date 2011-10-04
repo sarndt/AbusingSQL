@@ -297,6 +297,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 				$newValues.put("last_modified", $now);
 			}
 			Connection $c = null;
+			boolean $freshConnection = false;
 			int $depth = 0;
 			if ($args.length == 1) {
 				if ($args[0] instanceof Integer) {
@@ -310,11 +311,12 @@ public class ActiveRecordHandler implements InvocationHandler {
 			}
 			if ($c == null) {
 				$c = $dbAccess.getConnection();
+				$freshConnection = true;
 			}
-			boolean $commit = false;
+			boolean $autoCommit = false;
 			if ($depth > 0) {
 				if ($c.getAutoCommit()) {
-					$commit = true;
+					$autoCommit = true;
 					$c.setAutoCommit(false);
 				}
 				for (Entry<String,ActiveRecord<?>> $e : $resolvedRecords.entrySet()) {
@@ -347,7 +349,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 							Set<Integer> $ids = new TreeSet<Integer>();
 							for (ActiveRecord<?> $record : $resolvedSets.get($sqlName)) {
 								if (!$record.exists()) {
-									$record.saveChanges();
+									$record.saveChanges($c);
 								}
 								$ids.add($record.getId());
 							}
@@ -400,7 +402,10 @@ public class ActiveRecordHandler implements InvocationHandler {
 			} catch (SQLException $exc) {
 				throw new DatabaseException($exc);
 			} finally {
-				$dbAccess.release($c);
+				if ($freshConnection) {
+					System.out.println("It’s a fresh connection, give it back.");
+					$dbAccess.release($c);
+				}
 			}
 			for (Entry<String,Object> $e : $oldValues.entrySet()) {
 				if (!$newValues.containsKey($e.getKey())) {
@@ -410,15 +415,15 @@ public class ActiveRecordHandler implements InvocationHandler {
 			$oldValues = $newValues;
 			$newValues = new HashMap<String,Object>();
 			
-			if ($commit) {
+			if ($autoCommit) {
 				try {
 					$c.commit();
+					$c.setAutoCommit(true);
 				} catch (SQLException $exc) {
 					throw new DatabaseException($exc);
-				} finally {
-					$c.setAutoCommit(true);
 				}
 			}
+			
 		} else if ($methodName == "toString") {
 			if (($interface != null) && $interface.hasToStringProperty()) {
 				String $name = DatabaseSQL.makeSQLName($interface.getToStringProperty().getName());
@@ -449,7 +454,18 @@ public class ActiveRecordHandler implements InvocationHandler {
 			$resolvedSets.clear();
 			
 		} else if ($methodName == "discardChanges") {
-			$newValues.clear();
+			if ($propertyChangeSupport != null) {
+				Map<String,Object> $tmpValues = $newValues;
+				$newValues = new HashMap<String,Object>();
+				for (Entry<String,Object> $entry : $tmpValues.entrySet()) {
+					$propertyChangeSupport.firePropertyChange(
+							DatabaseSQL.makeJaveName($entry.getKey()),
+							$entry.getValue(),
+							$oldValues.get($entry.getKey()));
+				}
+			} else {
+				$newValues.clear();
+			}
 			
 		} else if ($methodName == "exists") {
 			return $id != null;
