@@ -403,7 +403,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 				throw new DatabaseException($exc);
 			} finally {
 				if ($freshConnection) {
-					System.out.println("It’s a fresh connection, give it back.");
 					$dbAccess.release($c);
 				}
 			}

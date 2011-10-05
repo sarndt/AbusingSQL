@@ -46,8 +46,4 @@ final public class DatabaseSQL {
 		}
 		return $builder.toString();
 	}
-	
-	public static void main(final String... $args) {
-		System.out.println(makeJaveName("login_name"));
-	}
 }
