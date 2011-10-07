@@ -1,6 +1,7 @@
 package net.abusingjava.sql;
 
 import net.abusingjava.Author;
+import net.abusingjava.Since;
 import net.abusingjava.Version;
 
 /**
@@ -12,6 +13,7 @@ import net.abusingjava.Version;
  */
 @Author("Julian Fleischer")
 @Version("2011-09-06")
+@Since("2011-09-06")
 public interface Mixin<T extends ActiveRecord<?>> {
 
 	/**

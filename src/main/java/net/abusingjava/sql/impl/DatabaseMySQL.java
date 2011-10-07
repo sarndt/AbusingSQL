@@ -168,6 +168,11 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			} else {
 				$builder.append("TEXT");
 			}
+			if ($property.getDefault() != null) {
+				$builder.append(" DEFAULT '");
+				$builder.append($property.getDefault().toString());
+				$builder.append("' ");
+			}
 		} else if ($javaType == Date.class) {
 			$builder.append("DATETIME DEFAULT 0");
 		} else if ($javaType == byte[].class) {

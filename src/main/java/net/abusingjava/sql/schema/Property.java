@@ -96,6 +96,8 @@ public class Property {
 					this.$default = $default.booleanValue();
 				} else if (($javaType == int.class) || ($javaType == Integer.class)) {
 					this.$default = $default.intValue();
+				} else if ($javaType == String.class) {
+					this.$default = $default.value();
 				} else {
 					this.$default = null;
 				}
