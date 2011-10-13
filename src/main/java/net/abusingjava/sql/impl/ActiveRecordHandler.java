@@ -19,7 +19,6 @@ import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.functions.AbusingFunctions;
 import net.abusingjava.sql.*;
-import net.abusingjava.sql.schema.Entity;
 import net.abusingjava.sql.schema.Interface;
 import net.abusingjava.sql.schema.ManyToMany;
 import net.abusingjava.sql.schema.Property;

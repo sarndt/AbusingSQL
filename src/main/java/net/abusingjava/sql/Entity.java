@@ -1,10 +1,9 @@
-package net.abusingjava.sql.schema;
+package net.abusingjava.sql;
 
 import java.util.Date;
 
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.ActiveRecord;
 
 @Author("Julian Fleischer")
 @Version("2011-08-13")

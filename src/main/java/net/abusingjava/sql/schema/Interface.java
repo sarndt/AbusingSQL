@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import net.abusingjava.AbusingReflection;
 import net.abusingjava.Author;
+import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.sql.Action;
 import net.abusingjava.sql.Mixin;
@@ -14,7 +15,8 @@ import net.abusingjava.sql.OnDelete;
 import net.abusingjava.sql.impl.DatabaseSQL;
 
 @Author("Julian Fleischer")
-@Version("2011-08-13")
+@Since("2011-08-13")
+@Version("2011-10-13")
 public class Interface {
 
 	final String $name;
