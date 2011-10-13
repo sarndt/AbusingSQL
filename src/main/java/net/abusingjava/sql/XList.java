@@ -10,6 +10,7 @@ import net.abusingjava.Version;
  */
 @Author("Julian Fleischer")
 @Version("2011-08-15")
+@Deprecated
 public interface XList<T> extends List<T> {
 
 }
