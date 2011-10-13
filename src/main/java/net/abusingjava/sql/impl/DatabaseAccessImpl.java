@@ -146,7 +146,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		String $sqlQuery = $extravaganza.makeSelectQuery($sqlName, $id);
 		RecordSet<T> $result = select($class, $sqlQuery);
 		if ($result.size() == 1) {
-			return $result.getFirst();
+			return $result.get(0);
 		}
 		return null;
 	}

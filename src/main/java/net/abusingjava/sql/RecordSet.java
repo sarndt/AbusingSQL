@@ -11,4 +11,6 @@ public interface RecordSet<T extends ActiveRecord<?>> extends SetList<T>, Suppor
 	boolean hasChanges();
 
 	void deleteAll();
+	
+	T getFirst();
 }
