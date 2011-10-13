@@ -10,6 +10,6 @@ import net.abusingjava.Version;
  */
 @Author("Julian Fleischer")
 @Version("2011-08-15")
-public interface SetList<T> extends List<T> {
+public interface XList<T> extends List<T> {
 
 }
