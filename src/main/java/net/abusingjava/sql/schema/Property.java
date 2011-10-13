@@ -2,10 +2,7 @@ package net.abusingjava.sql.schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import net.abusingjava.*;
 import net.abusingjava.sql.ActiveRecord;
@@ -46,7 +43,7 @@ public class Property {
 				$enumType = AbusingReflection.genericBaseType($getter.getGenericReturnType());
 				$isManyPart = false;
 				$genericType = null;
-			} else if (Set.class.isAssignableFrom($javaType)) {
+			} else if (List.class.isAssignableFrom($javaType)) {
 				$genericType = AbusingReflection.genericBaseType($getter.getGenericReturnType());
 				$isManyPart = false;
 				$enumType = null;
