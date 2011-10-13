@@ -37,7 +37,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 	private Map<String, Object> $oldValues = new HashMap<String, Object>();
 	private Map<String, Object> $newValues = new HashMap<String, Object>();
 	private final Map<String, ActiveRecord<?>> $resolvedRecords = new HashMap<String, ActiveRecord<?>>();
-	private final Map<String, SetList<ActiveRecord<?>>> $resolvedSets = new HashMap<String, SetList<ActiveRecord<?>>>();
+	private final Map<String, List<ActiveRecord<?>>> $resolvedSets = new HashMap<String, List<ActiveRecord<?>>>();
 	
 	private Integer $id = null;
 
@@ -171,7 +171,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			} else if ($property.getGenericType() != null) {
 				if (!$resolvedSets.containsKey($property.getSqlName())) {
 					if ($id == null) {
-						SetList<ActiveRecord<?>> $record = new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, $property.getParent());
+						List<ActiveRecord<?>> $record = new RecordSetImpl<ActiveRecord<?>>($dbAccess, null, $property.getParent());
 						$resolvedSets.put($property.getSqlName(), $record);
 						return $record;
 					}
@@ -193,7 +193,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 								@SuppressWarnings("unchecked")
 								RecordSet<? extends ActiveRecord<?>> $result = $dbAccess.select((Class<? extends ActiveRecord<?>>) $property.getGenericType(), $query, $id);
 								@SuppressWarnings({"unchecked", "unused"})
-								SetList<? extends ActiveRecord<?>> $return = $resolvedSets.put($property.getSqlName(), (SetList<ActiveRecord<?>>) $result);
+								List<? extends ActiveRecord<?>> $return = $resolvedSets.put($property.getSqlName(), (SetList<ActiveRecord<?>>) $result);
 								return $result;
 							}
 						}
@@ -203,7 +203,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 					@SuppressWarnings("unchecked")
 					Class<ActiveRecord<?>> $recordType = (Class<ActiveRecord<?>>) $property.getGenericType();
 					String $onePart = $property.getOnePart().getSqlName();
-					SetList<ActiveRecord<?>> $records = $dbAccess.select($recordType,
+					List<ActiveRecord<?>> $records = $dbAccess.select($recordType,
 							"SELECT * FROM " + $dbAccess.getDatabaseExtravaganza().escapeName(
 									$dbAccess.getSchema().getInterface($recordType).getSqlName()
 									) + " WHERE " + $dbAccess.getDatabaseExtravaganza().escapeName(
