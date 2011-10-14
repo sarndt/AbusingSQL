@@ -23,6 +23,9 @@ import net.abusingjava.sql.schema.Interface;
 import net.abusingjava.sql.schema.ManyToMany;
 import net.abusingjava.sql.schema.Property;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Implements an ActiveRecord at Runtime.
  */
@@ -30,6 +33,8 @@ import net.abusingjava.sql.schema.Property;
 @Version("2011-09-09")
 public class ActiveRecordHandler implements InvocationHandler {
 
+	private final Logger $logger = LoggerFactory.getLogger(getClass());
+	
 	private final DatabaseAccess $dbAccess;
 	private final Interface $interface;
 	private PropertyChangeSupport $propertyChangeSupport = null;
@@ -37,6 +42,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 	private Map<String, Object> $newValues = new HashMap<String, Object>();
 	private final Map<String, ActiveRecord<?>> $resolvedRecords = new HashMap<String, ActiveRecord<?>>();
 	private final Map<String, List<ActiveRecord<?>>> $resolvedSets = new HashMap<String, List<ActiveRecord<?>>>();
+	private boolean $hasChanges;
 
 	private Integer $id = null;
 
@@ -240,6 +246,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 				@SuppressWarnings("unchecked")
 				List<ActiveRecord<?>> $set = (List<ActiveRecord<?>>) $args[0];
 				$resolvedSets.put($property.getSqlName(), $set);
+				$hasChanges = true;
 				$setNewValue = false;
 			}
 			Object $oldValue = null;
@@ -424,6 +431,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			}
 			$oldValues = $newValues;
 			$newValues = new HashMap<String, Object>();
+			$hasChanges = false;
 
 			if ($autoCommit) {
 				try {
@@ -457,7 +465,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			return $keys.toArray(new String[$keys.size()]);
 
 		} else if ($methodName == "hasChanges") {
-			return !$newValues.isEmpty();
+			return !$newValues.isEmpty() || $hasChanges;
 
 		} else if ($methodName == "clearCache") {
 			$resolvedRecords.clear();
@@ -476,6 +484,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			} else {
 				$newValues.clear();
 			}
+			$hasChanges = false;
 
 		} else if ($methodName == "exists") {
 			return $id != null;

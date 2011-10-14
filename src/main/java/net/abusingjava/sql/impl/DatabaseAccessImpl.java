@@ -14,6 +14,9 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.*;
 import net.abusingjava.sql.schema.Schema;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Author("Julian Fleischer")
 @Version("2011-09-06")
 public class DatabaseAccessImpl implements DatabaseAccess {
@@ -21,6 +24,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	final ConnectionProvider $pool;
 	final Schema $schema;
 	final DatabaseExtravaganza $extravaganza;
+
+	private final Logger $logger = LoggerFactory.getLogger(getClass());
 
 	Connection $connection = null;
 
@@ -56,7 +61,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	public <T extends ActiveRecord<?>> T create(final Class<T> $class) {
 		@SuppressWarnings("unchecked")
 		T $instance = (T) Proxy.newProxyInstance($class.getClassLoader(),
-				new Class<?>[] { $class }, new ActiveRecordHandler(this,
+				new Class<?>[]{$class}, new ActiveRecordHandler(this,
 						$schema.getInterface($class)));
 		return $instance;
 	}
@@ -77,8 +82,9 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final String $query, final Object... $values) {
-		
+	public <T extends ActiveRecord<?>> RecordSet<T> select(final Class<T> $class, final String $query,
+			final Object... $values) {
+		$logger.debug("Issuing select \"{}\" with args {}.", $query, $values);
 		try {
 			Connection $c = $pool.getConnection();
 			try {
@@ -152,8 +158,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public RecordSet<ActiveRecord<?>> query(final String $query,
-			final Object... $values) {
+	public RecordSet<ActiveRecord<?>> query(final String $query, final Object... $values) {
+		$logger.debug("Issuing query \"{}\" with args {}.", $query, $values);
 		try {
 			Connection $c = $pool.getConnection();
 			try {
@@ -178,6 +184,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
 	@Override
 	public void exec(final String $query, final Object... $values) {
+		$logger.debug("Executing query \"{}\" with args {}.", $query, $values);
 		try {
 			Connection $c = $pool.getConnection();
 			try {
@@ -199,8 +206,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 	}
 
 	@Override
-	public ActiveRecord<?> querySingle(final String $query,
-			final Object... $values) {
+	public ActiveRecord<?> querySingle(final String $query, final Object... $values) {
+		$logger.debug("Issuing single query \"{}\" with args {}.", $query, $values);
 		try {
 			Connection $c = $pool.getConnection();
 			try {
@@ -225,19 +232,19 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 			throw new DatabaseException($exc);
 		}
 	}
-	
+
 	@Override
 	public <T extends ActiveRecord<?>> RecordSet<T> selectByExample(final ActiveRecord<T> $example) {
 		return selectByExample($example, AND | LIKE);
 	}
-	
+
 	@Override
 	public <T extends ActiveRecord<?>> RecordSet<T> selectByExample(final ActiveRecord<T> $example, final int $options) {
 		@SuppressWarnings("unchecked")
 		Class<T> $class = (Class<T>) (Proxy.isProxyClass($example.getClass())
-			? $example.getClass().getInterfaces()[0]
-			: $example.getClass());
-		Map<String,Object> $values = $example.newValues();
+				? $example.getClass().getInterfaces()[0]
+				: $example.getClass());
+		Map<String, Object> $values = $example.newValues();
 		if ($values.isEmpty()) {
 			try {
 				return new RecordSetImpl<T>(this, null, null);
@@ -249,7 +256,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 		String[] $where = new String[$values.size()];
 		Object[] $objects = new Object[$values.size()];
 		int $i = 0;
-		for (Entry<String,Object> $value : $values.entrySet()) {
+		for (Entry<String, Object> $value : $values.entrySet()) {
 			$where[$i] = getDatabaseExtravaganza().escapeName($value.getKey()) + " <=> ?";
 			$objects[$i] = $value.getValue();
 			if (($objects[$i] instanceof String) && (($options & LIKE) > 0)) {

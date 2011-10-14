@@ -16,11 +16,16 @@ import net.abusingjava.sql.DatabaseException;
 import net.abusingjava.sql.RecordSet;
 import net.abusingjava.sql.schema.Interface;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Author("Julian Fleischer")
 @Version("2011-08-15")
 public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> implements RecordSet<T> {
 
 	private static final long serialVersionUID = -1889746615690043280L;
+	
+	private final Logger $logger = LoggerFactory.getLogger(getClass());
 
 	final private DatabaseAccess $dbAccess;
 	final private PropertyChangeSupport $propertyChangeSupport = new PropertyChangeSupport(this);
@@ -46,16 +51,16 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	public void saveChanges() {
 		Connection $c = $dbAccess.getConnection();
 		try {
-			$c.setAutoCommit(false);
+			//$c.setAutoCommit(false);
 			for (T $obj : this) {
 				if ($obj.hasChanges()) {
 					$obj.saveChanges($c);
 				}
 			}
-			$c.commit();
-			$c.setAutoCommit(true);
-		} catch (SQLException $exc) {
-			throw new DatabaseException($exc);
+			//$c.commit();
+			//$c.setAutoCommit(true);
+		//} catch (SQLException $exc) {
+		//	throw new DatabaseException($exc);
 		} finally {
 			$dbAccess.release($c);
 		}
