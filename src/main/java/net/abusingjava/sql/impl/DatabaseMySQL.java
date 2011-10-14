@@ -292,6 +292,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	public void doUpdate(final Connection $c, final String $table, final String[] $properties, final Object[] $values, final int $id) throws SQLException {
 		PreparedStatement $stmt = $c.prepareStatement("UPDATE `" + $table + "` SET `"
 				+ implode("` = ?, `", $properties) + "` = ? WHERE `id` <=> " + $id);
+		
 		prepare($stmt, $values);
 		$stmt.executeUpdate();
 		$stmt.close();

@@ -232,6 +232,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 			String $beanPropertyName = Character.toLowerCase($methodName.charAt(3)) + $methodName.substring(4);
 			Property $property = $interface.getProperty($propertyName);
 			$propertyName = DatabaseSQL.makeSQLName($propertyName);
+			boolean $setNewValue = true;
 			if ($args[0] instanceof ActiveRecord) {
 				$resolvedRecords.put($propertyName, (ActiveRecord<?>) $args[0]);
 				$args[0] = ((ActiveRecord<?>) $args[0]).getId();
@@ -239,16 +240,20 @@ public class ActiveRecordHandler implements InvocationHandler {
 				@SuppressWarnings("unchecked")
 				List<ActiveRecord<?>> $set = (List<ActiveRecord<?>>) $args[0];
 				$resolvedSets.put($property.getSqlName(), $set);
+				$setNewValue = false;
 			}
 			Object $oldValue = null;
+			Object $newValue = $args[0];
 			if ($newValues.containsKey($propertyName)) {
 				$oldValue = $newValues.get($propertyName);
 			} else if ($oldValues.containsKey($propertyName)) {
 				$oldValue = $oldValues.get($propertyName);
 			}
-			$newValues.put($propertyName, $args[0]);
+			if ($setNewValue) {
+				$newValues.put($propertyName, $newValue);
+			}
 			if ($propertyChangeSupport != null) {
-				$propertyChangeSupport.firePropertyChange($beanPropertyName, $oldValue, $newValues.get($propertyName));
+				$propertyChangeSupport.firePropertyChange($beanPropertyName, $oldValue, $newValue);
 			}
 
 		} else if ($methodName == "equals") {
