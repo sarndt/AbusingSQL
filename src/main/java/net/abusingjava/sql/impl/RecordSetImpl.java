@@ -12,7 +12,6 @@ import net.abusingjava.Author;
 import net.abusingjava.Version;
 import net.abusingjava.sql.ActiveRecord;
 import net.abusingjava.sql.DatabaseAccess;
-import net.abusingjava.sql.DatabaseException;
 import net.abusingjava.sql.RecordSet;
 import net.abusingjava.sql.schema.Interface;
 
@@ -89,14 +88,14 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	public void deleteAll() {
 		Connection $c = $dbAccess.getConnection();
 		try {
-			$c.setAutoCommit(false);
+			//$c.setAutoCommit(false);
 			for (T $obj : this) {
 				$obj.delete($c);
 			}
-			$c.commit();
-			$c.setAutoCommit(true);
-		} catch (SQLException $exc) {
-			throw new DatabaseException($exc);
+			//$c.commit();
+			//$c.setAutoCommit(true);
+		//} catch (SQLException $exc) {
+		//	throw new DatabaseException($exc);
 		} finally {
 			$dbAccess.release($c);
 		}
