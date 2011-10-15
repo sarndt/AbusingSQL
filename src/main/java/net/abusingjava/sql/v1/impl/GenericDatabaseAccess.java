@@ -1,9 +1,6 @@
 package net.abusingjava.sql.v1.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 import net.abusingjava.Author;
 import net.abusingjava.Since;
@@ -96,7 +93,6 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 		Connection $connection = $transaction == null
 				? $connectionProvider.getConnection()
 				: $transaction.getConnection();
-		
 		try {
 			PreparedStatement $stmt = $connection.prepareStatement($preparedQuery);
 			for (int $i = 0; $i < $values.length; $i++) {
@@ -131,10 +127,16 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 		Connection $connection = $transaction == null
 				? $connectionProvider.getConnection()
 				: $transaction.getConnection();
+		Statement $statement;
 		try {
-			$connection.createStatement().execute($query);
+			$statement = $connection.createStatement();
 		} catch (SQLException $exc) {
-			throw new DatabaseException("", $exc);
+			throw new DatabaseException("Failed to create Statement.", $exc);
+		}
+		try {
+			$statement.execute($query);
+		} catch (SQLException $exc) {
+			throw new DatabaseException("Failed to execute previously created Statement.", $exc);
 		}
 		return this;
 	}
