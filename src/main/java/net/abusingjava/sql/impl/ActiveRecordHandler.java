@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import net.abusingjava.AbusingStrings;
 import net.abusingjava.Author;
+import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.functions.AbusingFunctions;
 import net.abusingjava.sql.*;
@@ -23,17 +24,13 @@ import net.abusingjava.sql.schema.Interface;
 import net.abusingjava.sql.schema.ManyToMany;
 import net.abusingjava.sql.schema.Property;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Implements an ActiveRecord at Runtime.
  */
 @Author("Julian Fleischer")
-@Version("2011-09-09")
+@Since("2011-09-09")
+@Version("2011-10-17")
 public class ActiveRecordHandler implements InvocationHandler {
-
-	private final Logger $logger = LoggerFactory.getLogger(getClass());
 	
 	private final DatabaseAccess $dbAccess;
 	private final Interface $interface;

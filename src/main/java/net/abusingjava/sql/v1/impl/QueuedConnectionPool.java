@@ -1,6 +1,8 @@
 package net.abusingjava.sql.v1.impl;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -9,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import net.abusingjava.Author;
 import net.abusingjava.Since;
 import net.abusingjava.Version;
+import net.abusingjava.WrappedException;
 import net.abusingjava.sql.v1.ConnectionProvider;
 import net.abusingjava.sql.v1.Credentials;
 
@@ -31,6 +34,12 @@ public class QueuedConnectionPool implements ConnectionProvider {
 	
 	private class ConnectionInfo {
 		
+		private boolean $inUse;
+		private final Connection $connection;
+
+		public ConnectionInfo(final Connection $connection) {
+			this.$connection = $connection;
+		}
 	}
 	
 	private class Worker implements Runnable {
@@ -60,7 +69,15 @@ public class QueuedConnectionPool implements ConnectionProvider {
 
 		@Override
 		public void run() {
-			
+			try {
+			Connection $connection = DriverManager.getConnection(
+					$credentials.getJdbcUrl(),
+					$credentials.getUsername(),
+					$credentials.getPassword());
+			$connections.add(new ConnectionInfo($connection));
+			} catch (SQLException $exc) {
+				throw new WrappedException($exc);
+			}
 		}
 	}
 	
@@ -80,7 +97,7 @@ public class QueuedConnectionPool implements ConnectionProvider {
 		} else if ($state == ConnectionProviderState.READY) {
 			if ($poolSize > $connections.size()) {
 				for (int $i = 0; $i < ($poolSize - $connections.size()); $i++) {
-					
+					$taskQueue.add(new CreateConnection());
 				}
 			} else {
 				

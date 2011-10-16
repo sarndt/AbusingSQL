@@ -191,7 +191,7 @@ public class ConnectionPool implements ConnectionProvider {
 				return $o.$connection;
 			}
 		} finally {
-			// System.err.println($connections.size());
+			$logger.debug("Open connections: {}", $connections.size());
 		}
 	}
 
@@ -210,6 +210,7 @@ public class ConnectionPool implements ConnectionProvider {
 				$connection.setAutoCommit(true);
 			}
 		} catch (SQLException $exc) {
+			$logger.error("Error committing uncommitted connection while releasing.", $exc);
 		}
 		synchronized ($connections) {
 			for (ConnectionObject $o : $connections) {
@@ -220,6 +221,7 @@ public class ConnectionPool implements ConnectionProvider {
 							$o.$connection.close();
 							$connections.remove($o);
 						} catch (SQLException $exc) {
+							$logger.error("Could not close connection while releasing", $exc);
 						}
 					}
 					return true;
@@ -238,10 +240,12 @@ public class ConnectionPool implements ConnectionProvider {
 						$o.$connection.commit();
 					}
 				} catch (SQLException $exc) {
+					$logger.error("Error committing uncommitted connection while closing connection pool.", $exc);
 				}
 				try {
 					$o.$connection.close();
 				} catch (SQLException $exc) {
+					$logger.error("Could not close connection while closing connection pool.", $exc);
 				}
 			}
 		}
