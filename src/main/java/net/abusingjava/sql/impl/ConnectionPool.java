@@ -156,15 +156,19 @@ public class ConnectionPool implements ConnectionProvider {
 	
 	@Override
 	public Connection getConnection() throws SQLException {
-		synchronized ($connections) {
-			for (ConnectionObject $o : $connections) {
-				if ($o.lease()) {
-					return $o.$connection;
+		try {
+			synchronized ($connections) {
+				for (ConnectionObject $o : $connections) {
+					if ($o.lease()) {
+						return $o.$connection;
+					}
 				}
+				ConnectionObject $o = new ConnectionObject($loginTimeout);
+				$connections.add($o);
+				return $o.$connection;
 			}
-			ConnectionObject $o = new ConnectionObject($loginTimeout);
-			$connections.add($o);
-			return $o.$connection;
+		} finally {
+			System.err.println($connections.size());
 		}
 	}
 	
@@ -188,6 +192,13 @@ public class ConnectionPool implements ConnectionProvider {
 			for (ConnectionObject $o : $connections) {
 				if ($o.$connection == $connection) {
 					$o.$inUse = false;
+					if ($connections.size() > $poolsize) {
+						try {
+							$o.$connection.close();
+							$connections.remove($o);
+						} catch (SQLException $exc) {
+						}
+					}
 					return true;
 				}
 			}
