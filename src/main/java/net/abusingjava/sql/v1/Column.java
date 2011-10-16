@@ -8,11 +8,12 @@ import net.abusingjava.Version;
 
 @Author("Julian Fleischer")
 @Version("1.0")
-@Since(version = "1.0", value = "2011-10-15")
+@Since(version = "1.0", value = "2011-10-16")
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface OnDelete {
+@Target(ElementType.METHOD)
+public @interface Column {
 
-	Action value();
+	String value();
+	
 }
