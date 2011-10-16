@@ -14,5 +14,5 @@ import net.abusingjava.Version;
 @Target(ElementType.TYPE)
 public @interface View {
 	
-	String query();
+	Query[] value();
 }
