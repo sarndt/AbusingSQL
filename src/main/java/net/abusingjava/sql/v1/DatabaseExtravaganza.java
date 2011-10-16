@@ -13,6 +13,12 @@ public interface DatabaseExtravaganza {
 	
 	<T extends ActiveRecord<T>> String getSelectQuery(Class<T> $class, int $offset, int $limit, Class<?>... $joinClasses);
 	
+	<T extends ActiveRecord<T>> String getSelectQuery(T $example, int $offset, int $limit, Class<?>... $joinClasses);
+	
+	<T extends ActiveRecord<T>> Object[] getExampleValues(T $example);
+	
+	<T extends ActiveRecord<T>> String getSelectByIdQuery(Class<T> $class);
+	
 	void setValue(final PreparedStatement $stmt, final int $index, final Object $value);
 	
 	void createTables(DatabaseAccess $databaseAccess);

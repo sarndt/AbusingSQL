@@ -1,6 +1,5 @@
 package net.abusingjava.sql.v1.impl;
 
-import java.math.BigDecimal;
 import java.sql.*;
 
 import net.abusingjava.Author;
@@ -16,7 +15,7 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 	final private ConnectionProvider $connectionProvider;
 	final private DatabaseExtravaganza $databaseExtravaganza;
 	final private ActiveRecordFactory $activeRecordFactory = new GenericActiveRecordFactory();
-	//final private RecordSetFactory $recordSetFactory = new GenericRecordSetFactory();
+	final private RecordSetFactory $recordSetFactory = new GenericRecordSetFactory();
 	
 	public GenericDatabaseAccess(
 			final Schema $schema,
@@ -37,11 +36,8 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 			final Transaction $transaction,
 			final Class<T> $class,
 			final int $id) {
-		Connection $connection = $transaction == null
-				? $connectionProvider.getConnection()
-				: $transaction.getConnection();
-		// TODO Auto-generated method stub
-		return null;
+		String $query = $databaseExtravaganza.getSelectByIdQuery($class);
+		return selectOne($class, $query, $id);
 	}
 
 	@Override
@@ -57,10 +53,10 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 		try {
 			PreparedStatement $stmt = $connection.prepareStatement($query);
 			ResultSet $result = $stmt.executeQuery();
+			return $recordSetFactory.createFromResultSet($class, $result);
 		} catch (SQLException $exc) {
 			throw new DatabaseException("", $exc);
 		}
-		return null;
 	}
 
 	@Override
@@ -75,15 +71,16 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 		try {
 			PreparedStatement $stmt = $connection.prepareStatement($query);
 			for (int $i = 0; $i < $args.length; $i++) {
-				setValue($stmt, $i+1, $args[$i]);
+				$databaseExtravaganza.setValue($stmt, $i+1, $args[$i]);
 			}
 			ResultSet $result = $stmt.executeQuery();
+			return $recordSetFactory.createFromResultSet($class, $result);
 		} catch (SQLException $exc) {
 			throw new DatabaseException("", $exc);
 		}
-		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ActiveRecord<T>> RecordSet<T> selectByExample(
 			final Transaction $transaction,
@@ -91,11 +88,8 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 			final int $offset,
 			final int $limit,
 			final Class<?>... $joinClasses) {
-		Connection $connection = $transaction == null
-				? $connectionProvider.getConnection()
-				: $transaction.getConnection();
-		// TODO Auto-generated method stub
-		return null;
+		String $query = $databaseExtravaganza.getSelectQuery($example, $offset, $limit, $joinClasses);
+		return select($transaction, (Class<T>) $example.getClass(), $query, $databaseExtravaganza.getExampleValues($example));
 	}
 
 	@Override
@@ -111,13 +105,13 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 		try {
 			PreparedStatement $stmt = $connection.prepareStatement($preparedQuery);
 			for (int $i = 0; $i < $values.length; $i++) {
-				setValue($stmt, $i+1, $values[$i]);
+				$databaseExtravaganza.setValue($stmt, $i+1, $values[$i]);
 			}
 			ResultSet $result = $stmt.executeQuery();
+			return $recordSetFactory.createFromResultSet((Class<ActiveRecord<?>>) null, $result);
 		} catch (SQLException $exc) {
 			throw new DatabaseException("", $exc);
 		}
-		return null;
 	}
 
 	@Override
@@ -128,35 +122,13 @@ public class GenericDatabaseAccess extends AbstractDatabaseAccess {
 		try {
 			PreparedStatement $stmt = $connection.prepareStatement($preparedQuery);
 			for (int $i = 0; $i < $values.length; $i++) {
-				setValue($stmt, $i+1, $values[$i]);
+				$databaseExtravaganza.setValue($stmt, $i+1, $values[$i]);
 			}
 			$stmt.execute();
 		} catch (SQLException $exc) {
 			throw new DatabaseException("", $exc);
 		}
 		return this;
-	}
-
-	private void setValue(final PreparedStatement $stmt, final int $index, final Object $object) throws SQLException {
-		if ($object instanceof Integer) {
-			$stmt.setInt($index, (Integer) $object);
-		} else if ($object instanceof Long) {
-			$stmt.setLong($index, (Long) $object);
-		} else if ($object instanceof Double) {
-			$stmt.setDouble($index, (Double) $object);
-		} else if ($object instanceof Float) {
-			$stmt.setFloat($index, (Float) $object);
-		} else if ($object instanceof String) {
-			$stmt.setString($index, $object.toString());
-		} else if ($object instanceof Date) {
-			$stmt.setTimestamp($index, new Timestamp(((Date) $object).getTime()));
-		} else if ($object instanceof Boolean) {
-			$stmt.setBoolean($index, (Boolean) $object);
-		} else if ($object instanceof BigDecimal) {
-			$stmt.setBigDecimal($index, (BigDecimal) $object);
-		} else if ($object instanceof Short) {
-			$stmt.setShort($index, (Short) $object);
-		}
 	}
 
 	@Override

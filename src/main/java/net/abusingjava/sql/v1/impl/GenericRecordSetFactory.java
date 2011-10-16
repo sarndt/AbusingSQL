@@ -9,13 +9,13 @@ import net.abusingjava.sql.v1.RecordSetFactory;
 public class GenericRecordSetFactory implements RecordSetFactory {
 
 	@Override
-	public <T extends ActiveRecord<T>> RecordSet<T> create(Class<T> $class) {
+	public <T extends ActiveRecord<T>> RecordSet<T> create(final Class<T> $class) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T extends ActiveRecord<T>> RecordSet<T> createFromResultSet(Class<T> $class, ResultSet $resultSet) {
+	public <T extends ActiveRecord<?>> RecordSet<T> createFromResultSet(final Class<T> $class, final ResultSet $resultSet) {
 		// TODO Auto-generated method stub
 		return null;
 	}

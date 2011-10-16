@@ -13,6 +13,6 @@ public interface RecordSetFactory {
 
 	<T extends ActiveRecord<T>> RecordSet<T> create(Class<T> $class);
 
-	<T extends ActiveRecord<T>> RecordSet<T> createFromResultSet(Class<T> $class, ResultSet $resultSet);
+	<T extends ActiveRecord<?>> RecordSet<T> createFromResultSet(Class<T> $class, ResultSet $resultSet);
 
 }

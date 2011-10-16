@@ -92,4 +92,23 @@ public class DatabaseMySQL implements DatabaseExtravaganza {
 			throw new DatabaseException($exc);
 		}
 	}
+
+	@Override
+	public <T extends ActiveRecord<T>> String getSelectQuery(final T $example, final int $offset, final int $limit,
+			final Class<?>... $joinClasses) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ActiveRecord<T>> Object[] getExampleValues(final T $example) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ActiveRecord<T>> String getSelectByIdQuery(final Class<T> $class) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
