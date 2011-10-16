@@ -25,4 +25,5 @@ public interface ConnectionProvider {
 	
 	void close();
 	
+	ConnectionProviderState getState();
 }

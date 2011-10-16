@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.abusingjava.Author;
+import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.sql.ConnectionProvider;
 import net.abusingjava.sql.DatabaseException;
@@ -16,7 +17,8 @@ import net.abusingjava.sql.DatabaseException;
  * A simple ConnectionPool that caches a certain amount of connections always.
  */
 @Author("Julian Fleischer")
-@Version("2011-08-15")
+@Since("2011-08-15")
+@Version("2011-10-16")
 public class ConnectionPool implements ConnectionProvider {
 
 	final private ArrayList<ConnectionObject> $connections;
