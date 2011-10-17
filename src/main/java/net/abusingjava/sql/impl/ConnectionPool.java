@@ -35,7 +35,7 @@ public class ConnectionPool implements ConnectionProvider {
 	final private int $reaperDelay;
 	final private int $reaperTimeout;
 	final private int $connectionTimeout;
-	
+
 	final private Logger $logger = LoggerFactory.getLogger(getClass());
 
 	@Override
@@ -121,6 +121,7 @@ public class ConnectionPool implements ConnectionProvider {
 	 *            Die Anzahl der Millisekunden die eine Verbindung Zeit hat
 	 *            einen erfolgreichen ping zu senden, bevor sie als invalid
 	 *            angesehen wird und erneuert würde.
+	 * 
 	 * @throws ClassNotFoundException
 	 *             Wenn die durch $driverClassName angegebene Klasse nicht
 	 *             gefunden wurde.

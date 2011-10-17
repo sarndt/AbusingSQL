@@ -2,9 +2,9 @@ package net.abusingjava.sql;
 
 import java.util.List;
 
-import net.abusingjava.SupportsPropertyChangeEvents;
+import net.abusingjava.event.OffersPropertyChangeEvents;
 
-public interface RecordSet<T extends ActiveRecord<?>> extends List<T>, SupportsPropertyChangeEvents {
+public interface RecordSet<T extends ActiveRecord<?>> extends List<T>, OffersPropertyChangeEvents {
 
 	void saveChanges();
 	

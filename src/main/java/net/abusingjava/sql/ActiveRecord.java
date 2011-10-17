@@ -4,15 +4,15 @@ import java.sql.Connection;
 import java.util.Map;
 
 import net.abusingjava.Author;
-import net.abusingjava.SupportsPropertyChangeEvents;
 import net.abusingjava.Version;
+import net.abusingjava.event.OffersPropertyChangeEvents;
 
 /**
  * An ActiveRecord is an object which maintains its state in the database by itself.
  */
 @Author("Julian Fleischer")
 @Version("2011-08-15")
-public interface ActiveRecord<T> extends SupportsPropertyChangeEvents {
+public interface ActiveRecord<T> extends OffersPropertyChangeEvents {
 
 	/**
 	 * Returns the unique identifier of this object or null, if it does not exist in the database.
