@@ -67,4 +67,9 @@ public class ObjectRecordSet extends LinkedList<ActiveRecord<?>> implements Reco
 		return null;
 	}
 
+	@Override
+	public ActiveRecord<?> getById(final int $id) {
+		return null;
+	}
+
 }

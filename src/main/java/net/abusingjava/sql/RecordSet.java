@@ -15,4 +15,6 @@ public interface RecordSet<T extends ActiveRecord<?>> extends List<T>, OffersPro
 	void deleteAll();
 	
 	T getFirst();
+	
+	T getById(int $id);
 }

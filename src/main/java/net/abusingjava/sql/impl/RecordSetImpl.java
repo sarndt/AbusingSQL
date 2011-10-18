@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 import net.abusingjava.Author;
+import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.sql.ActiveRecord;
 import net.abusingjava.sql.DatabaseAccess;
@@ -16,7 +17,8 @@ import net.abusingjava.sql.RecordSet;
 import net.abusingjava.sql.schema.Interface;
 
 @Author("Julian Fleischer")
-@Version("2011-08-15")
+@Since("2011-08-15")
+@Version("2011-10-18")
 public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> implements RecordSet<T> {
 
 	private static final long serialVersionUID = -1889746615690043280L;
@@ -109,6 +111,16 @@ public class RecordSetImpl<T extends ActiveRecord<?>> extends LinkedList<T> impl
 	@Override
 	public PropertyChangeListener[] getPropertyChangeListeners() {
 		return $propertyChangeSupport.getPropertyChangeListeners();
+	}
+
+	@Override
+	public T getById(final int $id) {
+		for (T $record : this) {
+			if ($record.getId() == $id) {
+				return $record;
+			}
+		}
+		return null;
 	}
 
 }
