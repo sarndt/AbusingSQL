@@ -42,7 +42,7 @@ final public class AbusingSQL {
 		int $offset = 0;
 		String[] $pieces = new String[($values.length*2)+1];
 		for (int $i = 0; $i < $values.length; $i++) {
-			int $index = $query.indexOf('?');
+			int $index = $query.indexOf('?', $offset);
 			$pieces[$i*2] = $query.substring($offset, $index);
 			$pieces[($i*2)+1] = debugValue($values[$i]);
 			$offset = $index+1;
