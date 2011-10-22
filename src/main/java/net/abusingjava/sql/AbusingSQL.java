@@ -2,11 +2,13 @@ package net.abusingjava.sql;
 
 import net.abusingjava.AbusingStrings;
 import net.abusingjava.Author;
+import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.sql.impl.GenericDatabaseAccessFactory;
 
 @Author("Julian Fleischer")
 @Version("2011-08-16")
+@Since(version = "1.0", value = "2011-08-16")
 final public class AbusingSQL {
 
 	AbusingSQL() {}
@@ -32,12 +34,21 @@ final public class AbusingSQL {
 	}
 	
 	private static String debugValue(final Object $value) {
-		if ($value instanceof String) {
+		if ($value instanceof Number) {
+			return $value.toString();
+		} else if ($value instanceof String) {
 			return '"' + $value.toString() + '"';
 		}
 		return $value.toString();
 	}
 	
+	/**
+	 * Shows a prepared query with values filled in.
+	 * <p>
+	 * @param $query A query containing place holders (“?”) like in a {@link java.sql.PreparedStatement}.
+	 * @param $values The values to be filled in. Must be exactly the same number of values as place-holders in $query.
+	 * @return The final query with values filled in.
+	 */
 	public static String debugQuery(final String $query, final Object... $values) {
 		int $offset = 0;
 		String[] $pieces = new String[($values.length*2)+1];
