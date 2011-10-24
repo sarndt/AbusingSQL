@@ -19,7 +19,13 @@ import net.abusingjava.Author;
 import net.abusingjava.Since;
 import net.abusingjava.Version;
 import net.abusingjava.functions.AbusingFunctions;
-import net.abusingjava.sql.*;
+import net.abusingjava.sql.ActiveRecord;
+import net.abusingjava.sql.DatabaseAccess;
+import net.abusingjava.sql.DatabaseException;
+import net.abusingjava.sql.DatabaseExtravaganza;
+import net.abusingjava.sql.Entity;
+import net.abusingjava.sql.Mixin;
+import net.abusingjava.sql.RecordSet;
 import net.abusingjava.sql.schema.Interface;
 import net.abusingjava.sql.schema.ManyToMany;
 import net.abusingjava.sql.schema.Property;
@@ -269,10 +275,11 @@ public class ActiveRecordHandler implements InvocationHandler {
 						return false;
 					}
 					if (($r.$id != null) || ($id != null)) {
-						return $r.$id == $id;
+						return $r.$id.equals($id);
 					}
 					return $r.$newValues.entrySet().equals($newValues.entrySet());
 				}
+				System.err.println("ooouhhh noooouhh");
 			}
 
 		} else if ($methodName == "hashCode") {
