@@ -1,6 +1,10 @@
 package net.abusingjava.sql.impl;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 
 import net.abusingjava.Author;
@@ -49,7 +53,11 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 				break;
 			case Types.TIMESTAMP:
 				$value = $resultSet.getTimestamp($i);
-				$value = new Date(((Timestamp) $value).getTime());
+				try {
+					$value = new Date(((Timestamp) $value).getTime());
+				} catch (Exception $exc) {
+					$value = null;
+				}
 				break;
 			case Types.BIGINT:
 				$value = $resultSet.getLong($i);
