@@ -4,7 +4,11 @@ import static net.abusingjava.AbusingStrings.*;
 import static net.abusingjava.functions.AbusingFunctions.callback;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.EnumSet;
 
@@ -15,13 +19,19 @@ import net.abusingjava.Version;
 import net.abusingjava.sql.ActiveRecord;
 import net.abusingjava.sql.ConnectionProvider;
 import net.abusingjava.sql.DatabaseException;
-import net.abusingjava.sql.schema.*;
+import net.abusingjava.sql.schema.Interface;
+import net.abusingjava.sql.schema.ManyToMany;
+import net.abusingjava.sql.schema.Property;
+import net.abusingjava.sql.schema.Schema;
+import net.abusingjava.sql.schema.UniqueKey;
 
 @Author("Julian Fleischer")
 @Version("2011-09-09")
 @Since("1.0")
 public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 
+	final String MYSQL_ENGINE = "MyISAM";
+	
 	@Override
 	public String escapeName(final String $name) {
 		return '`' + $name + '`';
@@ -79,7 +89,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 						$b.append(implode(", ", $propertyNames));
 						$b.append("),\n\t");
 					}
-					$b.append("PRIMARY KEY (`id`)\n) ENGINE=InnoDB DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
+					$b.append("PRIMARY KEY (`id`)\n) ENGINE=" + MYSQL_ENGINE + " DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
 					
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);
@@ -123,7 +133,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 					$b.append($m.getTo().getSqlName());
 					$b.append("` (`id`)");
 					
-					$b.append("\n) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
+					$b.append("\n) ENGINE = " + MYSQL_ENGINE + " DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
 
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);

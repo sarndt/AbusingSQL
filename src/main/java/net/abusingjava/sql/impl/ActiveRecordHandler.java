@@ -332,12 +332,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 				$c = $dbAccess.getConnection();
 				$freshConnection = true;
 			}
-			boolean $autoCommit = false;
 			if ($depth > 0) {
-				if ($c.getAutoCommit()) {
-					$autoCommit = true;
-					$c.setAutoCommit(false);
-				}
 				for (Entry<String, ActiveRecord<?>> $e : $resolvedRecords.entrySet()) {
 					ActiveRecord<?> $o = $e.getValue();
 					if (($o != null) && $o.hasChanges()) {
@@ -436,15 +431,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 			$oldValues = $newValues;
 			$newValues = new HashMap<String, Object>();
 			$hasChanges = false;
-
-			if ($autoCommit) {
-				try {
-					$c.commit();
-					$c.setAutoCommit(true);
-				} catch (SQLException $exc) {
-					throw new DatabaseException($exc);
-				}
-			}
 
 		} else if ($methodName == "toString") {
 			if (($interface != null) && $interface.hasToStringProperty()) {
