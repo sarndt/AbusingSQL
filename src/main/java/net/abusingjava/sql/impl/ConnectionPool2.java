@@ -23,6 +23,7 @@ public class ConnectionPool2 implements ConnectionProvider {
 
 	final private ConcurrentHashMap<Long, Tuple<Connection, Semaphore>> $connections;
 
+	@SuppressWarnings("unused")
 	final private int $poolsize;
 	final private int $loginTimeout;
 
@@ -30,6 +31,7 @@ public class ConnectionPool2 implements ConnectionProvider {
 	final private String $user;
 	final private String $password;
 
+	@SuppressWarnings("unused")
 	final private Logger $logger = LoggerFactory.getLogger(getClass());
 
 	@Override
@@ -47,7 +49,7 @@ public class ConnectionPool2 implements ConnectionProvider {
 			@SuppressWarnings("unused") final int $reaperDelay,
 			@SuppressWarnings("unused") final int $reaperTimeout,
 			@SuppressWarnings("unused") final int $connectionTimeout)
-			throws ClassNotFoundException, SQLException {
+			throws ClassNotFoundException {
 		this.$url = $url;
 		this.$user = $user;
 		this.$password = $password;
