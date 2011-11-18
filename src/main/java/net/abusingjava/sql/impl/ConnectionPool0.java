@@ -67,7 +67,7 @@ public class ConnectionPool0 implements ConnectionProvider {
 		long $timestamp;
 		boolean $inUse = false;
 
-		ConnectionObject(final int $timeout) throws SQLException {
+		ConnectionObject(@SuppressWarnings("unused") final int $timeout) throws SQLException {
 			$connection = DriverManager.getConnection($url, $user, $password);
 		}
 
