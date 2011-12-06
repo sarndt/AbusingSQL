@@ -1,0 +1,5 @@
+<!DOCTYPE db SYSTEM "db.dtd">
+<db>
+  <jdbc-url>mysql://%host%:%port%/%database%?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true&amp;connectTimeout=%connection-timeout%&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8</jdbc-url>
+  <transaction-isolation-level>TRANSACTION_NONE</transaction-isolation-level>
+</db>

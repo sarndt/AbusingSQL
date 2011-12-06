@@ -1,0 +1,4 @@
+<!ELEMENT db (jdbc-url,transaction-isolation-level)>
+
+<!ELEMENT jdbc-url (#PCDATA)*>
+<!ELEMENT transaction-isolation-level (#PCDATA)*>

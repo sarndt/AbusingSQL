@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.EnumSet;
 
@@ -334,10 +335,9 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 		} else if (($javaType == byte.class) || ($javaType == Byte.class)) {
 			$value = $resultSet.getByte($column);
 		} else if (java.util.Date.class.isAssignableFrom($javaType)) {
-			try {
-				$value = new Date($resultSet.getTimestamp($column).getTime());
-			} catch (Exception $exc) {
-				$value = null;
+			Timestamp $timestamp = $resultSet.getTimestamp($column);
+			if ($timestamp != null) {
+				$value = new Date($timestamp.getTime());
 			}
 		} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
 			$value = $resultSet.getInt($column);
