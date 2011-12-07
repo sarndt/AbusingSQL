@@ -5,7 +5,11 @@ import java.beans.PropertyChangeSupport;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import net.abusingjava.Author;
@@ -32,11 +36,11 @@ public class ConnectionPool implements
 		OffersPropertyChangeEvents,
 		OffersStateChangeEvents<ConnectionProviderState> {
 
-	private final Logger $logger = LoggerFactory.getLogger(getClass());
+	final Logger $logger = LoggerFactory.getLogger(getClass());
 
-	private final Semaphore $queueMaster = new Semaphore(0, true);
-	private final Semaphore $connectionMaster = new Semaphore(0, true);
-	private List<ConnectionHolder> $connections;
+	final Semaphore $queueMaster = new Semaphore(0, true);
+	final Semaphore $connectionMaster = new Semaphore(0, true);
+	List<ConnectionHolder> $connections;
 
 	private ConnectionProviderState $state = ConnectionProviderState.INITIALIZED;
 	private Credentials $credentials = null;
@@ -233,7 +237,7 @@ public class ConnectionPool implements
 		changeState(ConnectionProviderState.READY);
 	}
 
-	private void refreshPool() {
+	void refreshPool() {
 		try {
 			$queueMaster.acquire();
 			try {

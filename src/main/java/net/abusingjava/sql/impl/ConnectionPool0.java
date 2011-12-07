@@ -24,19 +24,19 @@ import org.slf4j.LoggerFactory;
 @Version("2011-10-16")
 public class ConnectionPool0 implements ConnectionProvider {
 
-	final private ArrayList<ConnectionObject> $connections;
-	final private int $poolsize;
-	final private int $loginTimeout;
+	final ArrayList<ConnectionObject> $connections;
+	final int $poolsize;
+	final int $loginTimeout;
 
-	final private String $url;
-	final private String $user;
-	final private String $password;
+	final String $url;
+	final String $user;
+	final String $password;
 
-	final private int $reaperDelay;
-	final private int $reaperTimeout;
-	final private int $connectionTimeout;
+	final int $reaperDelay;
+	final int $reaperTimeout;
+	final int $connectionTimeout;
 
-	final private Logger $logger = LoggerFactory.getLogger(getClass());
+	final Logger $logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public String getSchemaNameFromURL() {
