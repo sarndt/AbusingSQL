@@ -171,6 +171,20 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 				$builder.append($property.getDefault().toString());
 				$builder.append(" ");
 			}
+		} else if (($javaType == Float.class) || ($javaType == float.class)) {
+			$builder.append("FLOAT");
+			if ($property.getDefault() != null) {
+				$builder.append(" DEFAULT ");
+				$builder.append($property.getDefault().toString());
+				$builder.append(" ");
+			}
+		} else if (($javaType == Double.class) || ($javaType == double.class)) {
+			$builder.append("DOUBLE");
+			if ($property.getDefault() != null) {
+				$builder.append(" DEFAULT ");
+				$builder.append($property.getDefault().toString());
+				$builder.append(" ");
+			}
 		} else if ($javaType == String.class) {
 			if ($property.getMax() != null) {
 				$builder.append("VARCHAR(");
