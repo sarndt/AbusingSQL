@@ -30,6 +30,9 @@ import net.abusingjava.sql.schema.Interface;
 import net.abusingjava.sql.schema.ManyToMany;
 import net.abusingjava.sql.schema.Property;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Implements an ActiveRecord at Runtime.
  */
@@ -37,6 +40,8 @@ import net.abusingjava.sql.schema.Property;
 @Since("2011-09-09")
 @Version("2011-10-17")
 public class ActiveRecordHandler implements InvocationHandler {
+
+	static final Logger $logger = LoggerFactory.getLogger(ActiveRecordHandler.class);
 	
 	private final DatabaseAccess $dbAccess;
 	private final Interface $interface;
@@ -246,6 +251,9 @@ public class ActiveRecordHandler implements InvocationHandler {
 				$resolvedRecords.put($propertyName, (ActiveRecord<?>) $args[0]);
 				$args[0] = ((ActiveRecord<?>) $args[0]).getId();
 			} else if ($property.getGenericType() != null) {
+				if ($args[0] == null) {
+					throw new NullPointerException("Expecting List<" + $property.getGenericType().getCanonicalName() + ">, Argument may not be null");
+				}
 				@SuppressWarnings("unchecked")
 				List<ActiveRecord<?>> $set = (List<ActiveRecord<?>>) $args[0];
 				$resolvedSets.put($property.getSqlName(), $set);
@@ -364,6 +372,10 @@ public class ActiveRecordHandler implements InvocationHandler {
 						if ($resolvedSets.containsKey($sqlName)) {
 							Set<Integer> $ids = new TreeSet<Integer>();
 							for (ActiveRecord<?> $record : $resolvedSets.get($sqlName)) {
+								if ($record == null) {
+									$logger.warn("null in List where should not be a null value.");
+									continue;
+								}
 								if (!$record.exists()) {
 									$record.saveChanges($c);
 								}
