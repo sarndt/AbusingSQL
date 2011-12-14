@@ -219,7 +219,12 @@ public class ActiveRecordHandler implements InvocationHandler {
 					}
 					@SuppressWarnings("unchecked")
 					Class<ActiveRecord<?>> $recordType = (Class<ActiveRecord<?>>) $property.getGenericType();
+					
+					if ($property.getOnePart() == null) {
+						throw new NullPointerException("One-To-Many-Relationship is undefined; are you trying to resolve a Many-To-Many-Relationships where the other end is not defined in the interfaces?");
+					}
 					String $onePart = $property.getOnePart().getSqlName();
+					
 					List<ActiveRecord<?>> $records = $dbAccess.select($recordType,
 							"SELECT * FROM " + $dbAccess.getDatabaseExtravaganza().escapeName(
 									$dbAccess.getSchema().getInterface($recordType).getSqlName()
