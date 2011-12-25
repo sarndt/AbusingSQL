@@ -32,7 +32,7 @@ import net.abusingjava.sql.schema.UniqueKey;
 public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 
 	final String MYSQL_ENGINE = "MyISAM";
-	
+
 	@Override
 	public String escapeName(final String $name) {
 		return '`' + $name + '`';
@@ -47,12 +47,12 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	public void createDatabase(final ConnectionProvider $pool, final Schema $schema) {
 		try {
 			Connection $c = $pool.getConnection();
-			
+
 			$c.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
 			$c.setAutoCommit(false);
 			try {
 				StringBuilder $b = new StringBuilder();
-				
+
 				for (Interface $i : $schema.getInterfaces()) {
 					$b.append("CREATE TABLE ");
 					$b.append(escapeName($i.getSqlName()));
@@ -90,29 +90,30 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 						$b.append(implode(", ", $propertyNames));
 						$b.append("),\n\t");
 					}
-					$b.append("PRIMARY KEY (`id`)\n) ENGINE=" + MYSQL_ENGINE + " DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
-					
+					$b.append("PRIMARY KEY (`id`)\n) ENGINE=" + MYSQL_ENGINE
+							+ " DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
+
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);
 				}
-				
+
 				for (ManyToMany $m : $schema.getManyToManyRelationships()) {
 					$b.append("CREATE TABLE `");
 					$b.append($m.getFrom().getSqlName());
 					$b.append("_2_");
 					$b.append($m.getTo().getSqlName());
 					$b.append("`(\n\t");
-					
+
 					$b.append("`f_");
 					$b.append($m.getFrom().getSqlName());
 					$b.append("` INTEGER NOT NULL");
 					$b.append(",\n\t");
-					
+
 					$b.append("`f_");
 					$b.append($m.getTo().getSqlName());
 					$b.append("` INTEGER NOT NULL");
 					$b.append(",\n\t");
-					
+
 					$b.append("PRIMARY KEY (");
 					$b.append("`f_");
 					$b.append($m.getFrom().getSqlName());
@@ -120,7 +121,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 					$b.append($m.getTo().getSqlName());
 					$b.append("`)");
 					$b.append(",\n\t");
-					
+
 					$b.append("FOREIGN KEY (`f_");
 					$b.append($m.getFrom().getSqlName());
 					$b.append("`) REFERENCES `");
@@ -133,13 +134,14 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 					$b.append("`) REFERENCES `");
 					$b.append($m.getTo().getSqlName());
 					$b.append("` (`id`)");
-					
-					$b.append("\n) ENGINE = " + MYSQL_ENGINE + " DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
+
+					$b.append("\n) ENGINE = " + MYSQL_ENGINE
+							+ " DEFAULT CHARACTER SET = utf8 COLLATE = utf8_unicode_ci;\n");
 
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);
 				}
-				
+
 				$c.createStatement().execute("SET FOREIGN_KEY_CHECKS = 1");
 				$c.commit();
 			} catch (SQLException $exc) {
@@ -156,9 +158,16 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	public String getSqlType(final Property $property) {
 		Class<?> $javaType = $property.getJavaType();
 		StringBuilder $builder = new StringBuilder();
-		
+
 		if (($javaType == Integer.class) || ($javaType == int.class)) {
 			$builder.append("INTEGER");
+			if ($property.getDefault() != null) {
+				$builder.append(" DEFAULT ");
+				$builder.append($property.getDefault().toString());
+				$builder.append(" ");
+			}
+		} else if (($javaType == Long.class) || ($javaType == long.class)) {
+			$builder.append("BIGINT");
 			if ($property.getDefault() != null) {
 				$builder.append(" DEFAULT ");
 				$builder.append($property.getDefault().toString());
@@ -213,7 +222,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			Enum<?>[] $enums = $property.getEnumType().getEnumConstants();
 			String[] $enumNames = new String[$enums.length];
 			for (int $i = 0; $i < $enums.length; $i++) {
-			        $enumNames[$i] = $enums[$i].name();
+				$enumNames[$i] = $enums[$i].name();
 			}
 			$builder.append(implode("', '", $enumNames));
 			$builder.append("')");
@@ -222,14 +231,14 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 			Enum<?>[] $enums = (Enum[]) $javaType.getEnumConstants();
 			String[] $enumNames = new String[$enums.length];
 			for (int $i = 0; $i < $enums.length; $i++) {
-			        $enumNames[$i] = $enums[$i].name();
+				$enumNames[$i] = $enums[$i].name();
 			}
 			$builder.append(implode("', '", $enumNames));
 			$builder.append("')");
 		} else if (ActiveRecord.class.isAssignableFrom($javaType)) {
 			$builder.append("INTEGER");
 		}
-		
+
 		return $builder.toString();
 	}
 
@@ -237,19 +246,19 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	public void dropDatabase(final ConnectionProvider $pool, final Schema $schema) {
 		try {
 			Connection $c = $pool.getConnection();
-			
+
 			$c.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
 			$c.setAutoCommit(false);
 			try {
 				StringBuilder $b = new StringBuilder();
-				
+
 				for (ManyToMany $m : $schema.getManyToManyRelationships()) {
 					$b.append("DROP TABLE IF EXISTS `");
 					$b.append($m.getFrom().getSqlName());
 					$b.append("_2_");
 					$b.append($m.getTo().getSqlName());
 					$b.append("`");
-	
+
 					$c.createStatement().execute($b.toString());
 					$b.setLength(0);
 				}
@@ -257,7 +266,7 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 					$b.append("DROP TABLE IF EXISTS ");
 					$b.append(escapeName($i.getSqlName()));
 					$b.append(" CASCADE");
-					
+
 					Statement $stmt = $c.createStatement();
 					$stmt.execute($b.toString());
 					$stmt.close();
@@ -275,22 +284,22 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 		}
 	}
 
-        @Override
-        public void dropAllTablesInDatabase(final ConnectionProvider $pool) {
-            try {
-                
-                Connection $c = $pool.getConnection();
-                String $dbname= $pool.getSchemaNameFromURL();
-                Statement $stmt = $c.createStatement();
-                $stmt.execute("DROP DATABASE "+$dbname);
-                $stmt.execute("CREATE DATABASE "+$dbname);
-                $stmt.close();
-            } catch (SQLException $exc) {
-                throw new DatabaseException($exc);
-            }
-        }
+	@Override
+	public void dropAllTablesInDatabase(final ConnectionProvider $pool) {
+		try {
 
-        @Override
+			Connection $c = $pool.getConnection();
+			String $dbname = $pool.getSchemaNameFromURL();
+			Statement $stmt = $c.createStatement();
+			$stmt.execute("DROP DATABASE " + $dbname);
+			$stmt.execute("CREATE DATABASE " + $dbname);
+			$stmt.close();
+		} catch (SQLException $exc) {
+			throw new DatabaseException($exc);
+		}
+	}
+
+	@Override
 	public void doDelete(final Connection $c, final String $table, final int $id) throws SQLException {
 		Statement $stmt = $c.createStatement();
 		$stmt.executeUpdate("DELETE FROM `" + $table + "` WHERE `id` = " + $id);
@@ -298,7 +307,8 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	}
 
 	@Override
-	public int doInsert(final Connection $c, final String $table, final String[] $properties, final Object[] $values) throws SQLException {
+	public int doInsert(final Connection $c, final String $table, final String[] $properties, final Object[] $values)
+			throws SQLException {
 		PreparedStatement $stmt = $c.prepareStatement("INSERT INTO `" + $table + "` (`"
 				+ implode("`, `", $properties) + "`) VALUES ("
 				+ repeat("?, ", $properties.length - 1) + "?)"
@@ -314,10 +324,11 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	}
 
 	@Override
-	public void doUpdate(final Connection $c, final String $table, final String[] $properties, final Object[] $values, final int $id) throws SQLException {
+	public void doUpdate(final Connection $c, final String $table, final String[] $properties, final Object[] $values,
+			final int $id) throws SQLException {
 		PreparedStatement $stmt = $c.prepareStatement("UPDATE `" + $table + "` SET `"
 				+ implode("` = ?, `", $properties) + "` = ? WHERE `id` <=> " + $id);
-		
+
 		prepare($stmt, $values);
 		$stmt.executeUpdate();
 		$stmt.close();
@@ -326,9 +337,11 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	@Override
 	public Object get(final ResultSet $resultSet, final String $column, final Class<?> $javaType) throws SQLException {
 		Object $value = null;
-		
+
 		if (($javaType == int.class) || ($javaType == Integer.class)) {
 			$value = $resultSet.getInt($column);
+		} else if (($javaType == long.class) || ($javaType == Long.class)) {
+			$value = $resultSet.getLong($column);
 		} else if (($javaType == boolean.class) || ($javaType == Boolean.class)) {
 			$value = $resultSet.getBoolean($column);
 		} else if ($javaType == String.class) {
@@ -366,11 +379,11 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 	public void set(final PreparedStatement $stmt, final int $index, final Object $value) {
 		try {
 			if ($value instanceof Integer) {
-				$stmt.setInt($index, (Integer)$value);
+				$stmt.setInt($index, (Integer) $value);
 			} else if ($value instanceof String) {
-				$stmt.setString($index, (String)$value);
+				$stmt.setString($index, (String) $value);
 			} else if ($value instanceof Boolean) {
-				$stmt.setBoolean($index,  (Boolean)$value);
+				$stmt.setBoolean($index, (Boolean) $value);
 			} else if ($value instanceof EnumSet) {
 				EnumSet<?> $enumSet = (EnumSet<?>) $value;
 				String[] $names = new String[$enumSet.size()];
@@ -381,21 +394,23 @@ public class DatabaseMySQL extends AbstractDatabaseExtravaganza {
 				}
 				$stmt.setString($index, AbusingStrings.implode(",", $names));
 			} else if ($value instanceof Enum) {
-				$stmt.setString($index, ((Enum<?>)$value).name());
+				$stmt.setString($index, ((Enum<?>) $value).name());
 			} else if ($value instanceof byte[]) {
-				$stmt.setBytes($index, (byte[])$value);
+				$stmt.setBytes($index, (byte[]) $value);
 			} else if ($value instanceof Date) {
-				$stmt.setTimestamp($index, new java.sql.Timestamp( ((Date)$value).getTime() ));
+				$stmt.setTimestamp($index, new java.sql.Timestamp(((Date) $value).getTime()));
 			} else if ($value instanceof Float) {
-				$stmt.setFloat($index, (Float)$value);
+				$stmt.setFloat($index, (Float) $value);
 			} else if ($value instanceof Double) {
-				$stmt.setDouble($index, (Double)$value);
+				$stmt.setDouble($index, (Double) $value);
+			} else if ($value instanceof Long) {
+				$stmt.setLong($index, (Long) $value);
 			} else if ($value instanceof BigDecimal) {
-				$stmt.setBigDecimal($index, (BigDecimal)$value);
+				$stmt.setBigDecimal($index, (BigDecimal) $value);
 			} else if ($value instanceof Short) {
-				$stmt.setShort($index, (Short)$value);
+				$stmt.setShort($index, (Short) $value);
 			} else if ($value instanceof Byte) {
-				$stmt.setByte($index, (Byte)$value);
+				$stmt.setByte($index, (Byte) $value);
 			} else if ($value == null) {
 				$stmt.setNull($index, 0);
 			}

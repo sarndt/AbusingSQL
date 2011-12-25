@@ -2,7 +2,11 @@ package net.abusingjava.sql.schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.abusingjava.*;
 import net.abusingjava.sql.ActiveRecord;
@@ -93,6 +97,8 @@ public class Property {
 					this.$default = $default.booleanValue();
 				} else if (($javaType == int.class) || ($javaType == Integer.class)) {
 					this.$default = $default.intValue();
+				} else if (($javaType == long.class) || ($javaType == Long.class)) {
+					this.$default = $default.longValue();
 				} else if ($javaType == String.class) {
 					this.$default = $default.value();
 				} else {
