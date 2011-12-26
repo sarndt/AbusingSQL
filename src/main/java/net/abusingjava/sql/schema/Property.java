@@ -150,9 +150,6 @@ public class Property {
 		return $isManyPart;
 	}
 	
-	/**
-	 * TODO: This piece of code is seriously fucked up.
-	 */
 	public Property getOnePart() {
 		if ($onePart == null) {
 			for (Property $p : $parent.$parent.getInterface($genericType).getProperties()) {
