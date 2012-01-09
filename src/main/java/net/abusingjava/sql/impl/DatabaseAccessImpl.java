@@ -11,7 +11,12 @@ import java.util.Map.Entry;
 import net.abusingjava.AbusingStrings;
 import net.abusingjava.Author;
 import net.abusingjava.Version;
-import net.abusingjava.sql.*;
+import net.abusingjava.sql.ActiveRecord;
+import net.abusingjava.sql.ConnectionProvider;
+import net.abusingjava.sql.DatabaseAccess;
+import net.abusingjava.sql.DatabaseException;
+import net.abusingjava.sql.DatabaseExtravaganza;
+import net.abusingjava.sql.RecordSet;
 import net.abusingjava.sql.schema.Schema;
 
 import org.slf4j.Logger;
@@ -214,7 +219,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 				PreparedStatement $stmt = $c.prepareStatement($query,
 						ResultSet.TYPE_FORWARD_ONLY);
 				for (int $i = 0; $i < $values.length; $i++) {
-					$extravaganza.set($stmt, $i, $values[$i]);
+					$extravaganza.set($stmt, $i + 1, $values[$i]);
 				}
 				ResultSet $result = $stmt.executeQuery();
 				ObjectRecordSet $records = new ObjectRecordSet(this, $result);
