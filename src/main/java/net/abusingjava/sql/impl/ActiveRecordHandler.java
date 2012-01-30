@@ -61,7 +61,7 @@ public class ActiveRecordHandler implements InvocationHandler {
 		ResultSetMetaData $meta = $resultSet.getMetaData();
 		DatabaseExtravaganza $extravaganza = $dbAccess.getDatabaseExtravaganza();
 		for (int $i = 1; $i <= $meta.getColumnCount(); $i++) {
-			$oldValues.put($meta.getColumnName($i), $extravaganza.get($resultSet, $i, $meta.getColumnType($i)));
+			$oldValues.put($meta.getColumnLabel($i), $extravaganza.get($resultSet, $i, $meta.getColumnType($i)));
 		}
 	}
 
@@ -89,9 +89,9 @@ public class ActiveRecordHandler implements InvocationHandler {
 		ResultSetMetaData $meta = $resultSet.getMetaData();
 		DatabaseExtravaganza $extravaganza = $dbAccess.getDatabaseExtravaganza();
 		for (int $i = 1; $i <= $meta.getColumnCount(); $i++) {
-			String $columnName = $meta.getColumnName($i);
-			if ($columnName.equals("id") && !$oldValues.containsKey($columnName)) {
-				$oldValues.put($columnName, $extravaganza.get($resultSet, $i, $meta.getColumnType($i)));
+			String $columnLabel = $meta.getColumnLabel($i);
+			if ($columnLabel.equals("id") && !$oldValues.containsKey($columnLabel)) {
+				$oldValues.put($columnLabel, $extravaganza.get($resultSet, $i, $meta.getColumnType($i)));
 			}
 		}
 		$id = $resultSet.getInt("id");
