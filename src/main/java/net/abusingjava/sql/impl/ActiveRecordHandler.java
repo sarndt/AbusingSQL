@@ -86,6 +86,14 @@ public class ActiveRecordHandler implements InvocationHandler {
 			} catch (SQLException $exc) {
 			}
 		}
+		ResultSetMetaData $meta = $resultSet.getMetaData();
+		DatabaseExtravaganza $extravaganza = $dbAccess.getDatabaseExtravaganza();
+		for (int $i = 1; $i <= $meta.getColumnCount(); $i++) {
+			String $columnName = $meta.getColumnName($i);
+			if ($columnName.equals("id") && !$oldValues.containsKey($columnName)) {
+				$oldValues.put($columnName, $extravaganza.get($resultSet, $i, $meta.getColumnType($i)));
+			}
+		}
 		$id = $resultSet.getInt("id");
 	}
 
