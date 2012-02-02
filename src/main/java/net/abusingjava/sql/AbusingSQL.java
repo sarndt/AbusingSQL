@@ -1,5 +1,12 @@
 package net.abusingjava.sql;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.abusingjava.AbusingStrings;
 import net.abusingjava.Author;
 import net.abusingjava.Since;
@@ -60,5 +67,57 @@ final public class AbusingSQL {
 		}
 		$pieces[$pieces.length-1] = $query.substring($offset);
 		return AbusingStrings.implode("", $pieces);
+	}
+	
+	/**
+	 * Translates a ResultSet into a Map.
+	 */
+	public static Map<String,Object> loadResultSet(final ResultSet $result) throws SQLException {
+		Map<String,Object> $map = new HashMap<String,Object>();
+		
+		ResultSetMetaData $meta = $result.getMetaData();
+		int $count = $meta.getColumnCount();
+		for (int $i = 0; $i <= $count; $i++) {
+			String $key = $meta.getColumnLabel($i);
+			Object $value = null;
+			switch ($meta.getColumnType($i)) {
+			case Types.TINYINT:
+			case Types.SMALLINT:
+			case Types.INTEGER:
+				$value = $result.getInt($i);
+				break;
+			case Types.FLOAT:
+				$value = $result.getFloat($i);
+				break;
+			case Types.DOUBLE:
+				$value = $result.getDouble($i);
+				break;
+			case Types.BIT:
+			case Types.BOOLEAN:
+				$value = $result.getBoolean($i);
+				break;
+			case Types.BIGINT:
+				$value = $result.getLong($i);
+				break;
+			case Types.DECIMAL:
+				$value = $result.getBigDecimal($i);
+				break;
+			case Types.VARCHAR:
+			case Types.LONGVARCHAR:
+				$value = $result.getString($i);
+				break;
+			case Types.TIME:
+				$value = $result.getDate($i);
+				break;
+			case Types.TIMESTAMP:
+				$value = $result.getDate($i);
+				break;
+			case Types.DATE:
+				$value = $result.getDate($i);
+				break;
+			}
+			$map.put($key, $value);
+		}
+		return $map;
 	}
 }
