@@ -99,6 +99,10 @@ public class Property {
 					this.$default = $default.intValue();
 				} else if (($javaType == long.class) || ($javaType == Long.class)) {
 					this.$default = $default.longValue();
+				} else if (($javaType == double.class) || ($javaType == Double.class)) {
+					this.$default = $default.doubleValue();
+				} else if (($javaType == float.class) || ($javaType == Float.class)) {
+					this.$default = $default.floatValue();
 				} else if ($javaType == String.class) {
 					this.$default = $default.value();
 				} else {
