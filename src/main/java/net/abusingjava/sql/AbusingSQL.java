@@ -77,7 +77,7 @@ final public class AbusingSQL {
 		
 		ResultSetMetaData $meta = $result.getMetaData();
 		int $count = $meta.getColumnCount();
-		for (int $i = 0; $i <= $count; $i++) {
+		for (int $i = 1; $i <= $count; $i++) {
 			String $key = $meta.getColumnLabel($i);
 			Object $value = null;
 			switch ($meta.getColumnType($i)) {
