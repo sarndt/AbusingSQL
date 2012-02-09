@@ -331,8 +331,6 @@ public class ActiveRecordHandler implements InvocationHandler {
 				Date $now = new Date(System.currentTimeMillis());
 				if ($id == null) {
 					$newValues.put("created", $now);
-				} else {
-					$newValues.remove("created");
 				}
 				$newValues.put("last_modified", $now);
 			}

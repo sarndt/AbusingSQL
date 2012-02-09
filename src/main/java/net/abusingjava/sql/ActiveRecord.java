@@ -49,12 +49,12 @@ public interface ActiveRecord<T> extends OffersPropertyChangeEvents {
 	T discardChanges();
 	
 	/**
-	 * Deletes this ActiveRecord from the Database (if it exists).
+	 * Deletes this ActiveRecord immediately from the Database (if it exists).
 	 */
 	void delete();
 	
 	/**
-	 * Deletes this ActiveRecord from the Database (if it exists) using the given connection.
+	 * Deletes this ActiveRecord immediately from the Database (if it exists) using the given connection.
 	 */
 	void delete(Connection $c);
 
