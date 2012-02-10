@@ -18,8 +18,9 @@ import net.abusingjava.sql.impl.GenericDatabaseAccessFactory;
 @Since(version = "1.0", value = "2011-08-16")
 final public class AbusingSQL {
 
-	AbusingSQL() {}
-	
+	AbusingSQL() {
+	}
+
 	public static DatabaseAccessFactory newDatabaseAccessFactory(final String $name) {
 		try {
 			return (DatabaseAccessFactory) Class.forName($name).newInstance();
@@ -36,10 +37,11 @@ final public class AbusingSQL {
 		}
 	}
 
-	public static DatabaseAccessFactory newDatabaseAccessFactory(final DatabaseExtravaganza $extravaganza, final Class<?>... $classes) {
+	public static DatabaseAccessFactory newDatabaseAccessFactory(final DatabaseExtravaganza $extravaganza,
+			final Class<?>... $classes) {
 		return new GenericDatabaseAccessFactory($extravaganza, $classes);
 	}
-	
+
 	private static String debugValue(final Object $value) {
 		if ($value instanceof Number) {
 			return $value.toString();
@@ -48,35 +50,42 @@ final public class AbusingSQL {
 		}
 		return $value.toString();
 	}
-	
+
 	/**
 	 * Shows a prepared query with values filled in.
 	 * <p>
-	 * @param $query A query containing place holders (“?”) like in a {@link java.sql.PreparedStatement}.
-	 * @param $values The values to be filled in. Must be exactly the same number of values as place-holders in $query.
+	 * 
+	 * @param $query
+	 *            A query containing place holders (“?”) like in a
+	 *            {@link java.sql.PreparedStatement}.
+	 * @param $values
+	 *            The values to be filled in. Must be exactly the same number of
+	 *            values as place-holders in $query.
 	 * @return The final query with values filled in.
 	 */
 	public static String debugQuery(final String $query, final Object... $values) {
 		int $offset = 0;
-		String[] $pieces = new String[($values.length*2)+1];
-		for (int $i = 0; ($i < $values.length) && ($offset < $values.length); $i++) {
-			int $index = $query.indexOf('?', $offset);
-			if ($index < 0)
-				break;
-			$pieces[$i*2] = $query.substring($offset, $index);
-			$pieces[($i*2)+1] = debugValue($values[$i]);
-			$offset = $index+1;
+		String[] $pieces = new String[($values.length * 2) + 1];
+		try {
+			for (int $i = 0; ($i < $values.length); $i++) {
+				int $index = $query.indexOf('?', $offset);
+				$pieces[$i * 2] = $query.substring($offset, $index);
+				$pieces[($i * 2) + 1] = debugValue($values[$i]);
+				$offset = $index + 1;
+			}
+			$pieces[$pieces.length - 1] = $query.substring($offset);
+		} catch (Exception $exc) {
+			
 		}
-		$pieces[$pieces.length-1] = $query.substring($offset);
 		return AbusingStrings.implode("", $pieces);
 	}
-	
+
 	/**
 	 * Translates a ResultSet into a Map.
 	 */
-	public static Map<String,Object> loadResultSet(final ResultSet $result) throws SQLException {
-		Map<String,Object> $map = new HashMap<String,Object>();
-		
+	public static Map<String, Object> loadResultSet(final ResultSet $result) throws SQLException {
+		Map<String, Object> $map = new HashMap<String, Object>();
+
 		ResultSetMetaData $meta = $result.getMetaData();
 		int $count = $meta.getColumnCount();
 		for (int $i = 1; $i <= $count; $i++) {
