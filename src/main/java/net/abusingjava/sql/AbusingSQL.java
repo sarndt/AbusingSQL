@@ -59,8 +59,10 @@ final public class AbusingSQL {
 	public static String debugQuery(final String $query, final Object... $values) {
 		int $offset = 0;
 		String[] $pieces = new String[($values.length*2)+1];
-		for (int $i = 0; $i < $values.length; $i++) {
+		for (int $i = 0; ($i < $values.length) && ($offset < $values.length); $i++) {
 			int $index = $query.indexOf('?', $offset);
+			if ($index < 0)
+				break;
 			$pieces[$i*2] = $query.substring($offset, $index);
 			$pieces[($i*2)+1] = debugValue($values[$i]);
 			$offset = $index+1;
