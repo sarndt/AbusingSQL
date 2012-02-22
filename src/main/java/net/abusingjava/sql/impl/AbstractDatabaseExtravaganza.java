@@ -47,6 +47,7 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 			case Types.BIT:
 				$value = $resultSet.getBoolean($i);
 				break;
+			case Types.CHAR:
 			case Types.LONGVARCHAR:
 			case Types.VARCHAR:
 				$value = $resultSet.getString($i);
