@@ -45,11 +45,13 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 				break;
 			case Types.BOOLEAN:
 			case Types.BIT:
+			case Types.TINYINT:
 				$value = $resultSet.getBoolean($i);
 				break;
 			case Types.CHAR:
 			case Types.LONGVARCHAR:
 			case Types.VARCHAR:
+			case Types.NCHAR:
 				$value = $resultSet.getString($i);
 				break;
 			case Types.TIMESTAMP:
@@ -64,11 +66,14 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 				$value = $resultSet.getLong($i);
 				break;
 			case Types.VARBINARY:
+			case Types.BLOB:
+			case Types.LONGVARBINARY:
 				$value = $resultSet.getBytes($i);
 				break;
 			case Types.FLOAT:
 				$value = $resultSet.getFloat($i);
 				break;
+			case Types.DOUBLE:
 			case Types.REAL:
 				$value = $resultSet.getDouble($i);
 				break;
@@ -77,6 +82,9 @@ abstract class AbstractDatabaseExtravaganza implements DatabaseExtravaganza {
 				break;
 			case Types.TIME:
 				$value = $resultSet.getTime($i);
+				break;
+			case Types.DECIMAL:
+				$value = $resultSet.getBigDecimal($i);
 				break;
 			}
 			if ($resultSet.wasNull()) {
